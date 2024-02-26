@@ -78,15 +78,17 @@ public class EnemyStateMachine : MonoBehaviour
 
     private void ChooseAction() 
     {
-        HandleTurn myAttack = new HandleTurn();
-
-        myAttack.Attacker = enemy.Name;
-        myAttack.Type = "Enemy";
-        myAttack.attackersGobj = this.gameObject;
-        myAttack.attackersTarget = BSM.playersInBattle[Random.Range(0, BSM.playersInBattle.Count)]; // Randomize the target
-       
-        BSM.CollectActions(myAttack);
-        currentState = TurnState.WAITING;   
+        if(BSM.performList.Count == 0) 
+        {
+            HandleTurn myAttack = new HandleTurn();
+            myAttack.Attacker = enemy.Name;
+            myAttack.Type = "Enemy";
+            myAttack.attackersGobj = this.gameObject;
+            myAttack.attackersTarget = BSM.playersInBattle[Random.Range(0, BSM.playersInBattle.Count)]; // Randomize the target
+        
+            BSM.CollectActions(myAttack);
+            currentState = TurnState.WAITING;   
+        }
     }
 
     private IEnumerator TimeForAction() 

@@ -25,10 +25,12 @@ public class HeroStateMachine : MonoBehaviour
     public float maxCooldown = .75f;
 
     public Image progressBar;
+    public GameObject selector;
     void Start()
     {
         BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
         currentState = TurnState.PROCESSING;
+        selector.SetActive(false);
     }
 
     void Update()

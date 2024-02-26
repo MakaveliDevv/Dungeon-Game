@@ -8,6 +8,6 @@ public class SelectButton : MonoBehaviour
 
     public void SelectEnemy() 
     {
-        GameObject.Find("BattleManager").GetComponent<BattleStateMachine>(); // Save input of the enemy
+        GameObject.Find("BattleManager").GetComponent<BattleStateMachine>().Input2(enemyObj); // Save input of the enemy
     }  
 }
