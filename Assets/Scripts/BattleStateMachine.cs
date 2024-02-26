@@ -98,13 +98,13 @@ public class BattleStateMachine : MonoBehaviour
             // Connection to the enemy state machine of the currently selected game object (enemy)
             EnemyStateMachine curEnemy = _enemy.GetComponent<EnemyStateMachine>();
 
-            TextMeshPro buttonText = newButton.GetComponentInChildren<TextMeshPro>();
+            TextMeshProUGUI buttonText = newButton.GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = curEnemy.enemy.Name;
 
             // Need to pass in the content we need for the battle inside of the button, which is the enemy itself as the game object 
             button.enemyObj = _enemy;
 
-            newButton.transform.SetParent(spacer);
+            newButton.transform.SetParent(spacer, false);
         }
     }
 }
