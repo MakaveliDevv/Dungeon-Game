@@ -21,8 +21,8 @@ public class HeroStateMachine : MonoBehaviour
     }
 
     public TurnState currentState;
-    [SerializeField] private float cur_cooldown; // Remove serializefield later
-    public float maxCooldown = .75f;
+    private float maxCooldown = 1f;
+    private float curCooldown;
 
     public Image progressBar;
     public GameObject selector;
@@ -31,7 +31,7 @@ public class HeroStateMachine : MonoBehaviour
     public GameObject targetToAttack;
     private Vector2 startPosition;
     private bool actionStarted = false;
-    public float animSpeed = 10f;
+    private float animSpeed = 10f;
 
     void Start()
     {
@@ -81,11 +81,11 @@ public class HeroStateMachine : MonoBehaviour
 
     private void ProgressBar() 
     {
-        cur_cooldown += Time.deltaTime;
-        float calc_cooldown = cur_cooldown / maxCooldown; // Calculation of the cool down
+        curCooldown += Time.deltaTime;
+        float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
         progressBar.transform.localScale = new Vector3(Mathf.Clamp(calc_cooldown, 0, 1), progressBar.transform.localScale.y, progressBar.transform.localScale.z);
 
-        if(cur_cooldown >= maxCooldown) // If current cooldown reaches the maximum cooldown, then the processing state is over
+        if(curCooldown >= maxCooldown) // If current cooldown reaches the maximum cooldown, then the processing state is over
         {
             currentState = TurnState.ADDTOLIST;
         }
@@ -126,7 +126,7 @@ public class HeroStateMachine : MonoBehaviour
         actionStarted = false;
 
         // Reset the enemy state
-        cur_cooldown = 0f;
+        curCooldown = 0f;
         currentState = TurnState.PROCESSING;
     }
 

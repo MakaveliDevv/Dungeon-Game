@@ -136,7 +136,7 @@ public class BattleStateMachine : MonoBehaviour
             EnemyStateMachine curEnemy = _enemy.GetComponent<EnemyStateMachine>();
             TextMeshProUGUI buttonText = newButton.GetComponentInChildren<TextMeshProUGUI>();
             
-            buttonText.text = curEnemy.enemy.Name;
+            buttonText.text = curEnemy.enemy.TheName;
             button.enemyObj = _enemy; // Pass in the content we need for the battle inside of the button, which is the enemy itself as the game object 
 
 

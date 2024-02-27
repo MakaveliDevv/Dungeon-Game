@@ -19,13 +19,13 @@ public class EnemyStateMachine : MonoBehaviour
 
     public TurnState currentState;
     private float cur_cooldown;
-    [SerializeField] private float max_cooldown;
+    private float max_cooldown = 1f;
 
     private Vector2 startPosition;    
 
     // Time for action
     private bool actionStarted = false;
-    public float animSpeed = 10f;
+    private float animSpeed = 10f;
     public GameObject targetToAttack;
 
     void Start()
@@ -81,7 +81,7 @@ public class EnemyStateMachine : MonoBehaviour
         if(BSM.performList.Count == 0) 
         {
             HandleTurn myAttack = new HandleTurn();
-            myAttack.Attacker = enemy.Name;
+            myAttack.Attacker = enemy.TheName;
             myAttack.Type = "Enemy";
             myAttack.attackersGobj = this.gameObject;
             myAttack.attackersTarget = BSM.playersInBattle[Random.Range(0, BSM.playersInBattle.Count)]; // Randomize the target
