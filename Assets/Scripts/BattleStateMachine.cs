@@ -79,7 +79,9 @@ public class BattleStateMachine : MonoBehaviour
 
                 if(performList[0].Type == "Hero") 
                 {
-                    Debug.Log("Hero is attacking...");
+                    HeroStateMachine HSM = performer.GetComponent<HeroStateMachine>();
+                    HSM.targetToAttack = performList[0].attackersTarget;
+                    HSM.currentState = HeroStateMachine.TurnState.ACTION;
                 }
 
                 battleStates = BattleStates.PERFORMACTION;
@@ -87,7 +89,7 @@ public class BattleStateMachine : MonoBehaviour
             break;
 
             case(BattleStates.PERFORMACTION):
-
+                // Idle state
             break;
         }
         
@@ -152,7 +154,7 @@ public class BattleStateMachine : MonoBehaviour
         enemySelectPanel.SetActive(true);
     }
 
-    public void Input2(GameObject _chosenEnemy) 
+    public void Input2(GameObject _chosenEnemy) // Select enemy button
     {
        herosChoise.attackersTarget = _chosenEnemy;
        heroInput = HeroGUI.DONE;
