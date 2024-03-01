@@ -16,7 +16,7 @@ public class BattleStateMachine : MonoBehaviour
     public BattleStates battleStates;
     public List<HandleTurn> performList = new List<HandleTurn>();
 
-    public List<GameObject> playersInBattle = new List<GameObject>();
+    public List<GameObject> herosInBattle = new List<GameObject>();
     public List<GameObject> enemiesInBattle = new List<GameObject>();
 
     public enum HeroGUI 
@@ -45,7 +45,7 @@ public class BattleStateMachine : MonoBehaviour
         heroInput = HeroGUI.ACTIVATE;
 
         enemiesInBattle.AddRange(GameObject.FindGameObjectsWithTag("Enemy")); // Change this later, finding gameobject is not the best way to add in a list(use instance). And also by radius or anything like that
-        playersInBattle.AddRange(GameObject.FindGameObjectsWithTag("Player")); 
+        herosInBattle.AddRange(GameObject.FindGameObjectsWithTag("Hero")); 
 
         attackPanel.SetActive(false);
         enemySelectPanel.SetActive(false);
@@ -73,8 +73,21 @@ public class BattleStateMachine : MonoBehaviour
                 if(performList[0].Type == "Enemy") 
                 {
                     EnemyStateMachine ESM = performer.GetComponent<EnemyStateMachine>();
-                    ESM.targetToAttack = performList[0].attackersTarget;
-                    ESM.currentState = EnemyStateMachine.TurnState.ACTION; // This triggers the Action state
+                    for (int i = 0; i < herosInBattle.Count; i++)
+                    {
+                        if(performList[0].attackersTarget == herosInBattle[i]) // If currently attacked hero is in the herosbattle list
+                        {
+                            ESM.targetToAttack = performList[0].attackersTarget;
+                            ESM.currentState = EnemyStateMachine.TurnState.ACTION; // This triggers the Action state
+                            break;
+                        } else 
+                        {
+                            performList[0].attackersTarget = herosInBattle[Random.Range(0, herosInBattle.Count)];
+
+                            ESM.targetToAttack = performList[0].attackersTarget;
+                            ESM.currentState = EnemyStateMachine.TurnState.ACTION; // This triggers the Action state
+                        }
+                    }
                 }
 
                 if(performList[0].Type == "Hero") 

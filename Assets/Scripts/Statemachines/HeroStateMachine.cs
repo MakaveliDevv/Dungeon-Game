@@ -33,8 +33,24 @@ public class HeroStateMachine : MonoBehaviour
     private bool actionStarted = false;
     private float animSpeed = 10f;
 
+    // Dead
+    private bool isAlive = true;
+
+    // Hero panel
+    private HeroPanelStats stats;
+    public GameObject heroPanel;
+    private Transform heroPanelSpacer;
+
+
     void Start()
     {
+        // find spacer
+        heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
+        
+        // Create panel, fill in info
+        CreateHeroPanel();
+
+
         BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
         currentState = TurnState.PROCESSING;
         startPosition = transform.position;
@@ -71,6 +87,52 @@ public class HeroStateMachine : MonoBehaviour
             break;
 
             case (TurnState.DEAD):
+                if(!isAlive) 
+                {
+                    return;
+                } else 
+                {   
+                    // Change tag
+                    this.gameObject.tag = "DeadHero";
+
+                    // Not attackable by enemy
+                    BSM.herosInBattle.Remove(this.gameObject);
+
+                    // Not managable
+                    BSM.herosToManage.Remove(this.gameObject);
+
+                    // Deactivate the selector
+                    selector.SetActive(false);
+
+                    // Reset GUI
+                    BSM.attackPanel.SetActive(false);
+                    BSM.enemySelectPanel.SetActive(false);
+
+                    // Remove input from performlist
+                    for (int i = 0; i < BSM.performList.Count; i++)
+                    {
+                        if(BSM.performList[i].attackersGobj == this.gameObject) 
+                        {
+                            BSM.performList.Remove(BSM.performList[i]);
+                        }
+                    }
+
+                    // Change color / play animation
+                    // this.gameObject.GetComponent<SpriteRenderer>().material.color = new Color32(105, 105, 105, 255);
+                    SpriteRenderer spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
+                    if (spriteRenderer != null)
+                    {
+                        spriteRenderer.material.color = new Color32(105, 105, 105, 255);
+                    }
+                    else
+                    {
+                        Debug.LogError("SpriteRenderer component not found on the game object.");
+                    }
+
+                    // Reset hero input
+                    BSM.heroInput = BattleStateMachine.HeroGUI.ACTIVATE;
+                    isAlive = true;
+                }
 
             break;
             
@@ -136,8 +198,34 @@ public class HeroStateMachine : MonoBehaviour
         return newPosition != _targetPosition;
     }
     
-    public void TakeDamge(float _getDamageAmount) 
+    public void TakeDamge(float _damageAmount) 
     {
+        hero.curHP -= _damageAmount;
+        if(hero.curHP <= 0) 
+        {
+            hero.curHP = 0;
+            currentState = TurnState.DEAD;
+        }
 
+        UpdateHeroPanel();
+    }
+
+    private void CreateHeroPanel() 
+    {
+        heroPanel = Instantiate(heroPanel) as GameObject;
+        stats = heroPanel.GetComponent<HeroPanelStats>();
+
+        stats.heroName.text = hero.TheName;
+        stats.heroHP.text = "HP: " + hero.curHP;
+        stats.heroMP.text = "MP: " + hero.curMP;
+        this.progressBar = stats.progressBar;
+
+        heroPanel.transform.SetParent(heroPanelSpacer, false);
+    }
+
+    private void UpdateHeroPanel() 
+    {
+        stats.heroHP.text = "HP: " + hero.curHP;
+        stats.heroMP.text = "MP: " + hero.curMP;
     }
 }

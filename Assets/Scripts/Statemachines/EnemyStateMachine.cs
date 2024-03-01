@@ -88,7 +88,7 @@ public class EnemyStateMachine : MonoBehaviour
             myAttack.Attacker = enemy.TheName;
             myAttack.Type = "Enemy";
             myAttack.attackersGobj = this.gameObject;
-            myAttack.attackersTarget = BSM.playersInBattle[Random.Range(0, BSM.playersInBattle.Count)]; // Randomize the target
+            myAttack.attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)]; // Randomize the target
 
             // Choose attack
             int num = Random.Range(0, enemy.attacks.Count);
@@ -121,6 +121,7 @@ public class EnemyStateMachine : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Do damage
+        DoDamage();
 
         // Animate back to start position
         Vector2 initialPosition = startPosition;

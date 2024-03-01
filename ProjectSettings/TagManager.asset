@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - DeadHero
+  - Hero
+  - DeadEnemy
   layers:
   - Default
   - TransparentFX

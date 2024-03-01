@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 881913654064556427}
   m_Layer: 0
   m_Name: BaseHero
-  m_TagString: Player
+  m_TagString: Hero
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -101,13 +101,14 @@ MonoBehaviour:
   hero:
     TheName: BaseHero
     baseHP: 0
-    curHP: 0
+    curHP: 50
     baseMP: 0
     curMP: 0
     baseATK: 0
     curATK: 0
     baseDEF: 0
     curDEF: 0
+    attacks: []
     stamina: 0
     intellect: 0
     dexterity: 0
