@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Dungeon-Game.sln"
+    "dotnet.defaultSolution": "Dungeon Game.sln"
 }

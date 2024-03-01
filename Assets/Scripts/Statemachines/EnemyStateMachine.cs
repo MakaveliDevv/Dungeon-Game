@@ -18,10 +18,13 @@ public class EnemyStateMachine : MonoBehaviour
     }
 
     public TurnState currentState;
+    private Vector2 startPosition;
+    public GameObject selector;    
+    
+    // For the progressbar
     private float cur_cooldown;
     private float max_cooldown = 1f;
 
-    private Vector2 startPosition;    
 
     // Time for action
     private bool actionStarted = false;
@@ -33,6 +36,7 @@ public class EnemyStateMachine : MonoBehaviour
         currentState = TurnState.PROCESSING;
         BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>();
         startPosition = transform.position;
+        selector.SetActive(false);
     }
 
     void Update()
@@ -85,7 +89,16 @@ public class EnemyStateMachine : MonoBehaviour
             myAttack.Type = "Enemy";
             myAttack.attackersGobj = this.gameObject;
             myAttack.attackersTarget = BSM.playersInBattle[Random.Range(0, BSM.playersInBattle.Count)]; // Randomize the target
-        
+
+            // Choose attack
+            int num = Random.Range(0, enemy.attacks.Count);
+            myAttack.chosenAttack = enemy.attacks[num];
+
+            // 
+            
+            // Debug
+            Debug.Log(this.gameObject.name + " has choosen " + myAttack.chosenAttack.AttackName + " and does " + myAttack.chosenAttack.attackDamage + " damage");
+
             BSM.CollectActions(myAttack);
             currentState = TurnState.WAITING;   
         }
@@ -134,5 +147,12 @@ public class EnemyStateMachine : MonoBehaviour
         Vector2 newPosition = Vector2.MoveTowards(transform.position, _targetPosition, animSpeed * Time.deltaTime);
         transform.position = newPosition;
         return newPosition != _targetPosition;
+    }
+
+    public void DoDamage() 
+    {
+        float calc_damage = enemy.curATK + BSM.performList[0].chosenAttack.attackDamage;
+        // Get the hsm which represents the hero being attacked
+        targetToAttack.GetComponent<HeroStateMachine>().TakeDamge(calc_damage);
     }
 }

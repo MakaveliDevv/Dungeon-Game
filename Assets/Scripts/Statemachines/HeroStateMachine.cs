@@ -37,7 +37,6 @@ public class HeroStateMachine : MonoBehaviour
     {
         BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
         currentState = TurnState.PROCESSING;
-        selector.SetActive(false);
         startPosition = transform.position;
     }
 
@@ -135,5 +134,10 @@ public class HeroStateMachine : MonoBehaviour
         Vector2 newPosition = Vector2.MoveTowards(transform.position, _targetPosition, animSpeed * Time.deltaTime);
         transform.position = newPosition;
         return newPosition != _targetPosition;
+    }
+    
+    public void TakeDamge(float _getDamageAmount) 
+    {
+
     }
 }
