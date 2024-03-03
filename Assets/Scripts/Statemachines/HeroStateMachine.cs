@@ -44,7 +44,7 @@ public class HeroStateMachine : MonoBehaviour
 
     void Start()
     {
-        // find spacer
+        selector.SetActive(false);
         heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
         
         // Create panel, fill in info
@@ -93,7 +93,7 @@ public class HeroStateMachine : MonoBehaviour
                 } else 
                 {   
                     // Change tag
-                    this.gameObject.tag = "DeadHero";
+                    this.gameObject.tag = "Dead Hero";
 
                     // Not attackable by enemy
                     BSM.herosInBattle.Remove(this.gameObject);

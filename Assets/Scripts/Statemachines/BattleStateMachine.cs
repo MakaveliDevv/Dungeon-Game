@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,10 +15,10 @@ public class BattleStateMachine : MonoBehaviour
     }
 
     public BattleStates battleStates;
-    public List<HandleTurn> performList = new List<HandleTurn>();
+    public List<HandleTurn> performList = new();
 
-    public List<GameObject> herosInBattle = new List<GameObject>();
-    public List<GameObject> enemiesInBattle = new List<GameObject>();
+    public List<GameObject> herosInBattle = new();
+    public List<GameObject> enemiesInBattle = new();
 
     public enum HeroGUI 
     {
@@ -30,7 +31,7 @@ public class BattleStateMachine : MonoBehaviour
 
     // Hero input
     public HeroGUI heroInput;
-    public List<GameObject> herosToManage = new List<GameObject>();
+    public List<GameObject> herosToManage = new();
     private HandleTurn herosChoise;
 
     // Panels
@@ -55,16 +56,16 @@ public class BattleStateMachine : MonoBehaviour
         battleStates = BattleStates.WAIT;
         heroInput = HeroGUI.ACTIVATE;
 
-        enemiesInBattle.AddRange(GameObject.FindGameObjectsWithTag("Enemy")); // Change this later, finding gameobject is not the best way to add in a list(use instance). And also by radius or anything like that
-        herosInBattle.AddRange(GameObject.FindGameObjectsWithTag("Hero")); 
+        herosInBattle.AddRange(GameObject.FindGameObjectsWithTag("Hero").OrderBy(hero => hero.name)); 
+        enemiesInBattle.AddRange(GameObject.FindGameObjectsWithTag("Enemy").OrderBy(enemy => enemy.name)); // Change this later, finding gameobject is not the best way to add in a list(use instance). And also by radius or anything like that
 
+        // Panels
         attackParentPanel.SetActive(false);
         actionPanel.SetActive(false);
         enemySelectPanel.SetActive(false);
         magicPanel.SetActive(false);
 
         TargetBtns();
-
     }
 
     void Update()
@@ -158,8 +159,8 @@ public class BattleStateMachine : MonoBehaviour
     {
         foreach (GameObject _enemy in enemiesInBattle)
         {
-            GameObject newButton = Instantiate(targetButton);
-            newButton.name = "TargetButton";
+            GameObject newButton = Instantiate(targetButton) as GameObject;
+            newButton.name = "Target: " + _enemy.name;
 
             SelectButton button = newButton.GetComponent<SelectButton>();
             EnemyStateMachine curEnemy = _enemy.GetComponent<EnemyStateMachine>();
@@ -193,54 +194,56 @@ public class BattleStateMachine : MonoBehaviour
     {
         performList.Add(herosChoise);
         enemySelectPanel.SetActive(false);
+        herosToManage[0].transform.Find("Selector").gameObject.SetActive(false);
 
         // Clean up the attackpanel
         foreach (GameObject item in atkBtns)
         {
             Destroy(item);
         }
-        atkBtns.Clear();
 
-        herosToManage[0].transform.Find("Selector").gameObject.SetActive(false);
+        atkBtns.Clear();
         herosToManage.RemoveAt(0);
         heroInput = HeroGUI.ACTIVATE;
     }
 
-    // Create actionbuttons
     private void CreateAttackBTNS() 
     {
-        // Create a magic attack button for an action
-        GameObject attackButton = Instantiate(actionBtn) as GameObject;
-        TextMeshProUGUI attackButtonText = attackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
-        attackButton.name = "Attack Button";
-        attackButtonText.text = "Attack";
+        // Button for the the physical attack
+        GameObject attackButton = Instantiate(actionBtn) as GameObject; // Create new magic attack button for an action
+        TextMeshProUGUI attackButtonText = attackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>(); // Fetch the text 
+
+        attackButton.name = "PhysicalAtk Button"; // Name the game object
+        attackButtonText.text = "Physical"; // Name the text
+        
         attackButton.GetComponent<Button>().onClick.AddListener( () => Input1() );
         attackButton.transform.SetParent(actionSpacer, false);
         atkBtns.Add(attackButton);
 
-        // Create a button to go to the magic attack spells
+        // Button for the magic attack
         GameObject magicAttackButton = Instantiate(actionBtn) as GameObject;
-        TextMeshProUGUI magicButtonText = attackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
-        magicAttackButton.name = "Magic Button";
+        TextMeshProUGUI magicButtonText = magicAttackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
+
+        magicAttackButton.name = "MagicAtk Button";
         magicButtonText.text = "Magic";
+        
         magicAttackButton.GetComponent<Button>().onClick.AddListener( () => Input3() );
         magicAttackButton.transform.SetParent(actionSpacer, false);
         atkBtns.Add(magicAttackButton);
 
-        // Check after creating magic button if there is any skill in that magic list
-        if(herosToManage[0].GetComponent<HeroStateMachine>().hero.magicAttacks.Count > 0) 
+        // Create spell buttons
+        if(herosToManage[0].GetComponent<HeroStateMachine>().hero.magicAttacks.Count > 0) // Check after creating magic button if there is any skill in that magicAtk list
         {
-            // Loop through the list of magic attacks
-            foreach (BaseAttack spellAtk in herosToManage[0].GetComponent<HeroStateMachine>().hero.magicAttacks)
+            foreach (BaseAttack spellAtk in herosToManage[0].GetComponent<HeroStateMachine>().hero.magicAttacks) // Loop through the list of magic attacks
             {
-                // Create a spell button for each magic attack
                 GameObject spellBtn = Instantiate(magicButton) as GameObject;
-                TextMeshProUGUI spellBtnText = spellBtn.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI spellBtnText = spellBtn.transform.Find("SpellText").gameObject.GetComponent<TextMeshProUGUI>();
+
                 spellBtnText.text = spellAtk.name;
+                spellBtn.name = "Spell Button: " + spellBtnText.text + ", " + herosToManage[0].name;
             
-                // Fetch the attack button script from the instantiated button
-                AttackButton ATB = spellBtn.GetComponent<AttackButton>();
-                ATB.magicAttackToPerform = spellAtk; // Set the magic to perform to the spell attack, which are the spells a player has. Fetch the information from the heros to manage list
+                AttackButton ATB = spellBtn.GetComponent<AttackButton>(); // Fetch the attack button script from the instantiated button
+                ATB.magicAttackToPerform = spellAtk; // Set the magicBtn to perform to the spell attack, which are the spells a player has. Fetch the information from the heros to manage list
                 spellBtn.transform.SetParent(magicSpacer, false);
                 atkBtns.Add(spellBtn);
             }
@@ -266,6 +269,4 @@ public class BattleStateMachine : MonoBehaviour
         magicPanel.SetActive(false);
         enemySelectPanel.SetActive(true);
     }
-
-
 }

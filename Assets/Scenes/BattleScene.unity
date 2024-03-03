@@ -1004,7 +1004,7 @@ PrefabInstance:
       objectReference: {fileID: 3984346798896778713, guid: 190c321a9c4636345ab0e3af1f433af7, type: 3}
     - target: {fileID: 881913654064556427, guid: 85d00440c44886a449c52aaf3c7f312e, type: 3}
       propertyPath: hero.curHP
-      value: 85
+      value: 999
       objectReference: {fileID: 0}
     - target: {fileID: 881913654064556427, guid: 85d00440c44886a449c52aaf3c7f312e, type: 3}
       propertyPath: hero.curMP
@@ -1386,7 +1386,7 @@ PrefabInstance:
       objectReference: {fileID: 3984346798896778713, guid: 190c321a9c4636345ab0e3af1f433af7, type: 3}
     - target: {fileID: 881913654064556427, guid: 85d00440c44886a449c52aaf3c7f312e, type: 3}
       propertyPath: hero.curHP
-      value: 150
+      value: 999
       objectReference: {fileID: 0}
     - target: {fileID: 881913654064556427, guid: 85d00440c44886a449c52aaf3c7f312e, type: 3}
       propertyPath: hero.curMP

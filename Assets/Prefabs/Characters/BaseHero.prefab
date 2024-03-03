@@ -113,10 +113,12 @@ MonoBehaviour:
     intellect: 0
     dexterity: 0
     agility: 0
+    magicAttacks: []
   currentState: 0
   progressBar: {fileID: 0}
   selector: {fileID: 6648278644450032139}
   targetToAttack: {fileID: 0}
+  heroPanel: {fileID: 0}
 --- !u!1001 &2425654372052540360
 PrefabInstance:
   m_ObjectHideFlags: 0
