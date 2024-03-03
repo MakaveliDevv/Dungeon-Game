@@ -9,4 +9,7 @@ public class BaseHero : BaseClass
     public int intellect;
     public int dexterity;
     public int agility;
+
+    public List<BaseAttack> magicAttacks = new();
+    
 }

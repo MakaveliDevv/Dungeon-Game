@@ -8,7 +8,7 @@ public class HeroStateMachine : MonoBehaviour
 {
     private BattleStateMachine BSM; 
 
-    [SerializeField] private BaseHero hero;
+    public BaseHero hero;
     
     public enum TurnState 
     {
@@ -105,7 +105,7 @@ public class HeroStateMachine : MonoBehaviour
                     selector.SetActive(false);
 
                     // Reset GUI
-                    BSM.attackPanel.SetActive(false);
+                    BSM.actionPanel.SetActive(false);
                     BSM.enemySelectPanel.SetActive(false);
 
                     // Remove input from performlist
