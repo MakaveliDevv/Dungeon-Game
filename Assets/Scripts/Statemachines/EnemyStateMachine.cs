@@ -156,4 +156,14 @@ public class EnemyStateMachine : MonoBehaviour
         // Get the hsm which represents the hero being attacked
         targetToAttack.GetComponent<HeroStateMachine>().TakeDamge(calc_damage);
     }
+
+    public void TakeDamge(float _damageAmount) 
+    {
+        enemy.curHP -= _damageAmount;
+        if(enemy.curHP <= 0) 
+        {
+            enemy.curHP = 0;
+            currentState = TurnState.DEAD;
+        }
+    } 
 }

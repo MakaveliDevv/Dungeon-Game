@@ -11,7 +11,10 @@ public class BattleStateMachine : MonoBehaviour
     {
         WAIT,
         TAKEACTION,
-        PERFORMACTION
+        PERFORMACTION,
+        CHECKALIVE,
+        WIN,
+        LOSE
     }
 
     public BattleStates battleStates;
@@ -118,6 +121,30 @@ public class BattleStateMachine : MonoBehaviour
             case(BattleStates.PERFORMACTION):
                 // Idle state
             break;
+
+            case(BattleStates.CHECKALIVE):
+                if(herosInBattle.Count < 1) 
+                {
+                    battleStates = BattleStates.LOSE;
+
+                } else if(enemiesInBattle.Count < 1)
+                {
+                    battleStates = BattleStates.WIN;
+                } else 
+                {
+                    ClearAttackPanel();
+                    heroInput = HeroGUI.ACTIVATE;
+                }
+
+            break;
+
+            case(BattleStates.WIN):
+
+            break;
+
+            case(BattleStates.LOSE):
+            
+            break;
         }
         
         switch (heroInput) 
@@ -130,6 +157,7 @@ public class BattleStateMachine : MonoBehaviour
 
                     attackParentPanel.SetActive(true);
                     actionPanel.SetActive(true);
+                    
                     CreateAttackBTNS(); // Populate the attack panel with attack buttons
                     
                     heroInput = HeroGUI.WAITING;
@@ -179,6 +207,7 @@ public class BattleStateMachine : MonoBehaviour
         herosChoise.Attacker = herosToManage[0].name;
         herosChoise.attackersGobj = herosToManage[0];
         herosChoise.Type = "Hero";
+        herosChoise.chosenAttack = herosToManage[0].GetComponent<HeroStateMachine>().hero.attacks[0];
 
         actionPanel.SetActive(false);
         enemySelectPanel.SetActive(true);
@@ -190,21 +219,31 @@ public class BattleStateMachine : MonoBehaviour
        heroInput = HeroGUI.DONE;
     }
 
-    void HeroInputDone()
+    private void HeroInputDone()
     {
         performList.Add(herosChoise);
-        enemySelectPanel.SetActive(false);
+        
+        // Clean the attack panel
+        ClearAttackPanel();
+
         herosToManage[0].transform.Find("Selector").gameObject.SetActive(false);
-
-        // Clean up the attackpanel
-        foreach (GameObject item in atkBtns)
-        {
-            Destroy(item);
-        }
-
-        atkBtns.Clear();
         herosToManage.RemoveAt(0);
         heroInput = HeroGUI.ACTIVATE;
+    }
+
+    private void ClearAttackPanel()
+    {
+        enemySelectPanel.SetActive(false);
+        actionPanel.SetActive(false);
+        magicPanel.SetActive(false);
+        attackParentPanel.SetActive(false);
+
+        // Clean up the attackpanel
+        foreach (GameObject _atkBtn in atkBtns)
+        {
+            Destroy(_atkBtn);
+        }
+        atkBtns.Clear();
     }
 
     private void CreateAttackBTNS() 

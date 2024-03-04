@@ -77,10 +77,6 @@ public class HeroStateMachine : MonoBehaviour
 
             break;
 
-            case (TurnState.SELECTING):
-
-            break;
-
             case (TurnState.ACTION):
                 StartCoroutine(TimeForAction());
                 
@@ -93,7 +89,7 @@ public class HeroStateMachine : MonoBehaviour
                 } else 
                 {   
                     // Change tag
-                    this.gameObject.tag = "Dead Hero";
+                    this.gameObject.tag = "DeadHero";
 
                     // Not attackable by enemy
                     BSM.herosInBattle.Remove(this.gameObject);
@@ -118,7 +114,6 @@ public class HeroStateMachine : MonoBehaviour
                     }
 
                     // Change color / play animation
-                    // this.gameObject.GetComponent<SpriteRenderer>().material.color = new Color32(105, 105, 105, 255);
                     SpriteRenderer spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
                     if (spriteRenderer != null)
                     {
@@ -130,10 +125,9 @@ public class HeroStateMachine : MonoBehaviour
                     }
 
                     // Reset hero input
-                    BSM.heroInput = BattleStateMachine.HeroGUI.ACTIVATE;
-                    isAlive = true;
+                    BSM.battleStates = BattleStateMachine.BattleStates.CHECKALIVE;
+                    isAlive = false;
                 }
-
             break;
             
             // default:
@@ -170,10 +164,10 @@ public class HeroStateMachine : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Do damage
+        DoDamage();
 
         // Animate back to start position
         Vector2 initialPosition = startPosition;
-        Debug.Log(initialPosition);
 
         while(MoveTowardsTarget(initialPosition)) { yield return null; } // Change while loop to something else
 
@@ -197,7 +191,13 @@ public class HeroStateMachine : MonoBehaviour
         transform.position = newPosition;
         return newPosition != _targetPosition;
     }
-    
+
+    public void DoDamage() 
+    {
+        float calc_damage = hero.curATK + BSM.performList[0].chosenAttack.attackDamage;
+        targetToAttack.GetComponent<EnemyStateMachine>().TakeDamge(calc_damage); // Get the esm which represents the hero being attacked
+    }
+
     public void TakeDamge(float _damageAmount) 
     {
         hero.curHP -= _damageAmount;
