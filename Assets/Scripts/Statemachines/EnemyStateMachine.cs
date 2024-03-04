@@ -82,16 +82,40 @@ public class EnemyStateMachine : MonoBehaviour
                     selector.SetActive(false);
 
                     // Remove all inputs enemy attackss
-                    for (int i = 0; i < BSM.performList.Count; i++)
+                    if(BSM.enemiesInBattle.Count > 0) 
                     {
-                        if(BSM.performList[i].attackersGobj == this.gameObject) 
+                        for (int i = 0; i < BSM.performList.Count; i++)
                         {
-                            BSM.performList.Remove(BSM.performList[i]);
+                            if(BSM.performList[i].attackersGobj == this.gameObject) 
+                            {
+                                BSM.performList.Remove(BSM.performList[i]);
+                            }
+
+                            // Check if the target of the hero is this enemy
+                            if(BSM.performList[i].attackersTarget == this.gameObject) 
+                            {
+                                BSM.performList[i].attackersTarget = BSM.enemiesInBattle[Random.Range(0, BSM.enemiesInBattle.Count)];
+                            }
                         }
                     }
 
                     // Change the color / play dead animation
-                    // this.gameObject.GetComponent<>();
+                    SpriteRenderer spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
+                    if(spriteRenderer != null) 
+                    {
+                        spriteRenderer.material.color = new Color32(105, 105, 105, 255);
+                    } else 
+                    {
+                        Debug.LogError("SpriteRenderer component not found on the game object.");
+                    }
+
+                    alive = false;
+
+                    // Reset enemy buttons
+                    BSM.EnemyButtons();
+
+                    // Check if this enemy is alive (turn to CHECK ALIVE state)
+                    BSM.battleStates = BattleStateMachine.BattleStates.CHECKALIVE;
                 }
 
             break;

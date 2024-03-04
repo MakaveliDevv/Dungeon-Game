@@ -34,7 +34,7 @@ public class BattleStateMachine : MonoBehaviour
 
     // Hero input
     public HeroGUI heroInput;
-    public List<GameObject> herosToManage = new();
+    [HideInInspector] public List<GameObject> herosToManage = new();
     private HandleTurn herosChoise;
 
     // Panels
@@ -52,7 +52,10 @@ public class BattleStateMachine : MonoBehaviour
     public GameObject actionBtn;
     public GameObject targetButton;
     public GameObject magicButton;
-    [SerializeField] private List<GameObject> atkBtns = new();
+    private List<GameObject> atkBtns = new();
+
+    // Enemy buttons
+    private List<GameObject> enemyBtns = new();
 
     void Start()
     {
@@ -68,7 +71,7 @@ public class BattleStateMachine : MonoBehaviour
         enemySelectPanel.SetActive(false);
         magicPanel.SetActive(false);
 
-        TargetBtns();
+        EnemyButtons();
     }
 
     void Update()
@@ -139,11 +142,16 @@ public class BattleStateMachine : MonoBehaviour
             break;
 
             case(BattleStates.WIN):
+                Debug.Log("You won the battle");
+                for (int i = 0; i < herosInBattle.Count; i++)
+                {
+                    herosInBattle[i].GetComponent<HeroStateMachine>().currentState = HeroStateMachine.TurnState.WAITING;
+                }
 
             break;
 
             case(BattleStates.LOSE):
-            
+                Debug.Log("You lost the battle");
             break;
         }
         
@@ -183,8 +191,16 @@ public class BattleStateMachine : MonoBehaviour
         performList.Add(_input);
     }
 
-    void TargetBtns() 
+    public void EnemyButtons() 
     {
+        // Clean up everything that is already created
+        foreach(GameObject _enemyBtn in enemyBtns) 
+        {
+            Destroy(_enemyBtn);
+        }
+        enemyBtns.Clear();
+
+        // Proceed further with creating buttons
         foreach (GameObject _enemy in enemiesInBattle)
         {
             GameObject newButton = Instantiate(targetButton) as GameObject;
@@ -199,6 +215,7 @@ public class BattleStateMachine : MonoBehaviour
 
 
             newButton.transform.SetParent(targetSelectSpacer, false);
+            enemyBtns.Add(newButton); // Add buttons to the list
         }
     }
 

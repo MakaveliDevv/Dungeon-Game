@@ -15,7 +15,6 @@ public class HeroStateMachine : MonoBehaviour
         PROCESSING,
         ADDTOLIST,
         WAITING,
-        SELECTING,
         ACTION,
         DEAD
     }
@@ -34,7 +33,7 @@ public class HeroStateMachine : MonoBehaviour
     private float animSpeed = 10f;
 
     // Dead
-    private bool isAlive = true;
+    private bool alive = true;
 
     // Hero panel
     private HeroPanelStats stats;
@@ -83,7 +82,7 @@ public class HeroStateMachine : MonoBehaviour
             break;
 
             case (TurnState.DEAD):
-                if(!isAlive) 
+                if(!alive) 
                 {
                     return;
                 } else 
@@ -104,12 +103,22 @@ public class HeroStateMachine : MonoBehaviour
                     BSM.actionPanel.SetActive(false);
                     BSM.enemySelectPanel.SetActive(false);
 
-                    // Remove input from performlist
-                    for (int i = 0; i < BSM.performList.Count; i++)
+                    if(BSM.herosInBattle.Count > 0) 
                     {
-                        if(BSM.performList[i].attackersGobj == this.gameObject) 
+                        // Remove input from performlist
+                        for (int i = 0; i < BSM.performList.Count; i++)
                         {
-                            BSM.performList.Remove(BSM.performList[i]);
+                            if(BSM.performList[i].attackersGobj == this.gameObject) 
+                            {
+                                BSM.performList.Remove(BSM.performList[i]);
+                            }
+
+                            // Check if the target of the enemy is this hero
+                            if(BSM.performList[i].attackersTarget == this.gameObject) 
+                            {
+                                // Change target to random target
+                                BSM.performList[i].attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)];
+                            }
                         }
                     }
 
@@ -126,7 +135,7 @@ public class HeroStateMachine : MonoBehaviour
 
                     // Reset hero input
                     BSM.battleStates = BattleStateMachine.BattleStates.CHECKALIVE;
-                    isAlive = false;
+                    alive = false;
                 }
             break;
             
@@ -174,15 +183,21 @@ public class HeroStateMachine : MonoBehaviour
         // Remove this performer from the list in the BSM
         BSM.performList.RemoveAt(0);
 
-        // Reset the BSM -> WAIT
-        BSM.battleStates = BattleStateMachine.BattleStates.WAIT;
+        // Reset the BSM -> WAIT'
+        if(BSM.battleStates != BattleStateMachine.BattleStates.WIN && BSM.battleStates != BattleStateMachine.BattleStates.LOSE) 
+        {
+            BSM.battleStates = BattleStateMachine.BattleStates.WAIT;
+
+            // Reset hero state
+            curCooldown = 0f;
+            currentState = TurnState.PROCESSING;
+        } else 
+        {
+            currentState = TurnState.WAITING;
+        }
 
         // End coroutine
         actionStarted = false;
-
-        // Reset the enemy state
-        curCooldown = 0f;
-        currentState = TurnState.PROCESSING;
     }
 
     private bool MoveTowardsTarget(Vector2 _targetPosition)
