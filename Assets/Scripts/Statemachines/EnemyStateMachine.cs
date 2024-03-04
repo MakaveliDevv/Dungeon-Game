@@ -31,6 +31,9 @@ public class EnemyStateMachine : MonoBehaviour
     private float animSpeed = 10f;
     public GameObject targetToAttack;
 
+    // Alive enemy
+    private bool alive = true;
+
     void Start()
     {
         currentState = TurnState.PROCESSING;
@@ -64,6 +67,32 @@ public class EnemyStateMachine : MonoBehaviour
             break;
 
             case (TurnState.DEAD):
+                if(!alive) 
+                {
+                    return;
+                } else 
+                {
+                    // Change tag of enemy
+                    this.gameObject.tag = "DeadEnemy";
+
+                    // Not attackable by hero
+                    BSM.enemiesInBattle.Remove(this.gameObject);
+
+                    // Disable the selector
+                    selector.SetActive(false);
+
+                    // Remove all inputs enemy attackss
+                    for (int i = 0; i < BSM.performList.Count; i++)
+                    {
+                        if(BSM.performList[i].attackersGobj == this.gameObject) 
+                        {
+                            BSM.performList.Remove(BSM.performList[i]);
+                        }
+                    }
+
+                    // Change the color / play dead animation
+                    // this.gameObject.GetComponent<>();
+                }
 
             break;
             
