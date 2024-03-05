@@ -27,8 +27,6 @@ public class BattleStateMachine : MonoBehaviour
     {
         ACTIVATE,
         WAITING,
-        INPUT1,
-        INPUT2,
         DONE
     }
 
@@ -224,7 +222,7 @@ public class BattleStateMachine : MonoBehaviour
         herosChoise.Attacker = herosToManage[0].name;
         herosChoise.attackersGobj = herosToManage[0];
         herosChoise.Type = "Hero";
-        herosChoise.chosenAttack = herosToManage[0].GetComponent<HeroStateMachine>().hero.attacks[0];
+        herosChoise.chosenAttack = herosToManage[0].GetComponent<HeroStateMachine>().baseHero.attacks[0];
 
         actionPanel.SetActive(false);
         enemySelectPanel.SetActive(true);
@@ -288,9 +286,9 @@ public class BattleStateMachine : MonoBehaviour
         atkBtns.Add(magicAttackButton);
 
         // Create spell buttons
-        if(herosToManage[0].GetComponent<HeroStateMachine>().hero.magicAttacks.Count > 0) // Check after creating magic button if there is any skill in that magicAtk list
+        if(herosToManage[0].GetComponent<HeroStateMachine>().baseHero.magicAttacks.Count > 0) // Check after creating magic button if there is any skill in that magicAtk list
         {
-            foreach (BaseAttack spellAtk in herosToManage[0].GetComponent<HeroStateMachine>().hero.magicAttacks) // Loop through the list of magic attacks
+            foreach (BaseAttack spellAtk in herosToManage[0].GetComponent<HeroStateMachine>().baseHero.magicAttacks) // Loop through the list of magic attacks
             {
                 GameObject spellBtn = Instantiate(magicButton) as GameObject;
                 TextMeshProUGUI spellBtnText = spellBtn.transform.Find("SpellText").gameObject.GetComponent<TextMeshProUGUI>();

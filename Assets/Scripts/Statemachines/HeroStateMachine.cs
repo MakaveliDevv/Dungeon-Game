@@ -8,7 +8,7 @@ public class HeroStateMachine : MonoBehaviour
 {
     private BattleStateMachine BSM; 
 
-    public BaseHero hero;
+    public BaseHero baseHero;
     
     public enum TurnState 
     {
@@ -37,7 +37,7 @@ public class HeroStateMachine : MonoBehaviour
 
     // Hero panel
     private HeroPanelStats stats;
-    public GameObject heroPanel;
+    public GameObject heroPanelUI;
     private Transform heroPanelSpacer;
 
 
@@ -45,10 +45,9 @@ public class HeroStateMachine : MonoBehaviour
     {
         selector.SetActive(false);
         heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
-        
-        // Create panel, fill in info
+    
+        // Create panel
         CreateHeroPanel();
-
 
         BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
         currentState = TurnState.PROCESSING;
@@ -84,7 +83,7 @@ public class HeroStateMachine : MonoBehaviour
             case (TurnState.DEAD):
                 if(!alive) 
                 {
-                    return;
+                    return; // Do nothing if hero still alive
                 } else 
                 {   
                     // Change tag
@@ -103,9 +102,9 @@ public class HeroStateMachine : MonoBehaviour
                     BSM.actionPanel.SetActive(false);
                     BSM.enemySelectPanel.SetActive(false);
 
+                    // Remove inputs from performlist
                     if(BSM.herosInBattle.Count > 0) 
                     {
-                        // Remove input from performlist
                         for (int i = 0; i < BSM.performList.Count; i++)
                         {
                             if(BSM.performList[i].attackersGobj == this.gameObject) 
@@ -149,11 +148,10 @@ public class HeroStateMachine : MonoBehaviour
         float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
         progressBar.transform.localScale = new Vector3(Mathf.Clamp(calc_cooldown, 0, 1), progressBar.transform.localScale.y, progressBar.transform.localScale.z);
 
-        if(curCooldown >= maxCooldown) // If current cooldown reaches the maximum cooldown, then the processing state is over
+        if(curCooldown >= maxCooldown)
         {
             currentState = TurnState.ADDTOLIST;
         }
-
     }
 
     private IEnumerator TimeForAction() 
@@ -177,22 +175,22 @@ public class HeroStateMachine : MonoBehaviour
 
         // Animate back to start position
         Vector2 initialPosition = startPosition;
-
         while(MoveTowardsTarget(initialPosition)) { yield return null; } // Change while loop to something else
 
         // Remove this performer from the list in the BSM
         BSM.performList.RemoveAt(0);
 
-        // Reset the BSM -> WAIT'
+        // Reset the battle state to waiting after completing an action
         if(BSM.battleStates != BattleStateMachine.BattleStates.WIN && BSM.battleStates != BattleStateMachine.BattleStates.LOSE) 
         {
             BSM.battleStates = BattleStateMachine.BattleStates.WAIT;
 
-            // Reset hero state
+            // Reset the hero state
             curCooldown = 0f;
             currentState = TurnState.PROCESSING;
         } else 
         {
+            // Set the hero state back to waiting (idle)
             currentState = TurnState.WAITING;
         }
 
@@ -209,16 +207,16 @@ public class HeroStateMachine : MonoBehaviour
 
     public void DoDamage() 
     {
-        float calc_damage = hero.curATK + BSM.performList[0].chosenAttack.attackDamage;
+        float calc_damage = baseHero.curATK + BSM.performList[0].chosenAttack.attackDamage;
         targetToAttack.GetComponent<EnemyStateMachine>().TakeDamge(calc_damage); // Get the esm which represents the hero being attacked
     }
 
     public void TakeDamge(float _damageAmount) 
     {
-        hero.curHP -= _damageAmount;
-        if(hero.curHP <= 0) 
+        baseHero.curHP -= _damageAmount;
+        if(baseHero.curHP <= 0) 
         {
-            hero.curHP = 0;
+            baseHero.curHP = 0;
             currentState = TurnState.DEAD;
         }
 
@@ -227,20 +225,20 @@ public class HeroStateMachine : MonoBehaviour
 
     private void CreateHeroPanel() 
     {
-        heroPanel = Instantiate(heroPanel) as GameObject;
-        stats = heroPanel.GetComponent<HeroPanelStats>();
+        heroPanelUI = Instantiate(heroPanelUI) as GameObject;
+        stats = heroPanelUI.GetComponent<HeroPanelStats>();
 
-        stats.heroName.text = hero.TheName;
-        stats.heroHP.text = "HP: " + hero.curHP;
-        stats.heroMP.text = "MP: " + hero.curMP;
+        stats.heroName.text = baseHero.TheName;
+        stats.heroHP.text = "HP: " + baseHero.curHP;
+        stats.heroMP.text = "MP: " + baseHero.curMP;
         this.progressBar = stats.progressBar;
 
-        heroPanel.transform.SetParent(heroPanelSpacer, false);
+        heroPanelUI.transform.SetParent(heroPanelSpacer, false);
     }
 
     private void UpdateHeroPanel() 
     {
-        stats.heroHP.text = "HP: " + hero.curHP;
-        stats.heroMP.text = "MP: " + hero.curMP;
+        stats.heroHP.text = "HP: " + baseHero.curHP;
+        stats.heroMP.text = "MP: " + baseHero.curMP;
     }
 }
