@@ -8,6 +8,10 @@ TagManager:
   - DeadHero
   - Hero
   - DeadEnemy
+  - EnterTown
+  - LeaveTown
+  - Region1
+  - Region2
   layers:
   - Default
   - TransparentFX

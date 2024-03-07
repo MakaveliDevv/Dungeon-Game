@@ -55,13 +55,26 @@ public class BattleStateMachine : MonoBehaviour
     // Enemy buttons
     private List<GameObject> enemyBtns = new();
 
+    // Spawn points
+    public List<Transform> spawnPoints = new();
+
+    void Awake() 
+    {
+        for (int i = 0; i < GameManager.instance.enemyAmount; i++)
+        {
+            GameObject newEnemy = Instantiate(GameManager.instance.enemiesToBattle[i], spawnPoints[i].position, Quaternion.identity) as GameObject;
+            newEnemy.name = newEnemy.GetComponent<EnemyStateMachine>().enemy.TheName + "_" + (i+1);
+            newEnemy.GetComponent<EnemyStateMachine>().enemy.TheName = newEnemy.name;
+            enemiesInBattle.Add(newEnemy);
+        }
+    }
+
     void Start()
     {
         battleStates = BattleStates.WAIT;
         heroInput = HeroGUI.ACTIVATE;
 
         herosInBattle.AddRange(GameObject.FindGameObjectsWithTag("Hero").OrderBy(hero => hero.name)); 
-        enemiesInBattle.AddRange(GameObject.FindGameObjectsWithTag("Enemy").OrderBy(enemy => enemy.name)); // Change this later, finding gameobject is not the best way to add in a list(use instance). And also by radius or anything like that
 
         // Panels
         attackParentPanel.SetActive(false);
