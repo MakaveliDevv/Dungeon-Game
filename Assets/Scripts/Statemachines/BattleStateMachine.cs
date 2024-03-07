@@ -157,6 +157,10 @@ public class BattleStateMachine : MonoBehaviour
                 for (int i = 0; i < herosInBattle.Count; i++)
                 {
                     herosInBattle[i].GetComponent<HeroStateMachine>().currentState = HeroStateMachine.TurnState.WAITING;
+
+                    GameManager.instance.LoadSceneAfterBattle();
+                    GameManager.instance.gameState = GameManager.GameStates.WORLDSTATE;
+                    GameManager.instance.enemiesToBattle.Clear();
                 }
 
             break;

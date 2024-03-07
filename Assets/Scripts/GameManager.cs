@@ -74,11 +74,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void LoadNextScene() 
-    {
-        SceneManager.LoadScene(SceneToLoad);
-    }
-
     void Update() 
     {
         switch (gameState)
@@ -116,12 +111,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void LoadNextScene() 
+    {
+        SceneManager.LoadScene(SceneToLoad);
+    }
+
+    public void LoadSceneAfterBattle() 
+    {
+        SceneManager.LoadScene(LastScene);
+    }
+
     private void RandomEncounter() 
     {
         if(isWalking && canGetEncounter) 
         {
             // Create random encounter number
-            if(Random.Range(0, 2000) < 10) 
+            if(Random.Range(0, 1000) < 10) 
             {
                 Debug.Log("I got attacked");
                 gotAttacked = true;
