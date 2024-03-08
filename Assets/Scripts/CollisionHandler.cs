@@ -5,7 +5,8 @@ using UnityEngine;
 public class CollisionHandler : MonoBehaviour
 {
     public string SceneName;
-    public GameObject spawnPoint;
+    public string SpawnPointName;
+    // public GameObject spawnPoint;
 
     // GameState 
 }

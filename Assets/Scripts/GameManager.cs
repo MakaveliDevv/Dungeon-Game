@@ -7,18 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    // Class
-    [System.Serializable]
-    public class RegionData 
-    {
-        public string RegionName;
-        public int maxEnemiesEncounter = 4;
-        public string BattleScene;
-        public List<GameObject> possibleEnemies = new();
-    }
-
-    public List<RegionData> regions = new();
-    public int curRegion;
+    public RegionData curRegion;
 
     // Enum
     public enum GameStates 
@@ -48,6 +37,9 @@ public class GameManager : MonoBehaviour
     // Battle
     public List<GameObject> enemiesToBattle = new();
     public int enemyAmount;
+
+    // Spawnpoint
+    public string NextSpawnPoint;
     
     void Awake()
     {
@@ -126,7 +118,7 @@ public class GameManager : MonoBehaviour
         if(isWalking && canGetEncounter) 
         {
             // Create random encounter number
-            if(Random.Range(0, 1000) < 10) 
+            if(Random.Range(0, 2000) < 10) 
             {
                 Debug.Log("I got attacked");
                 gotAttacked = true;
@@ -136,17 +128,12 @@ public class GameManager : MonoBehaviour
 
     private void StartBattle() 
     {
-        // Amount of enemies
-        // for (int i = 0; i < regions.Count; i++)
-        // {
-        //     int enemyAmount = Random.Range(1, regions[curRegions].maxEnemiesEncounter + 1);
-        // }
-        enemyAmount = Random.Range(0, regions[curRegion].maxEnemiesEncounter + 1);
+        enemyAmount = Random.Range(1, curRegion.maxEnemiesEncounter + 1);
 
         // Which enemies
         for (int i = 0; i < enemyAmount; i++)
         {
-            enemiesToBattle.Add(regions[curRegion].possibleEnemies[Random.Range(0, regions[curRegion].possibleEnemies.Count)]);
+            enemiesToBattle.Add(curRegion.possibleEnemies[Random.Range(0, curRegion.possibleEnemies.Count)]);
         }
 
         // Hero
@@ -154,7 +141,7 @@ public class GameManager : MonoBehaviour
         LastScene = SceneManager.GetActiveScene().name;
 
         // Load level
-        SceneManager.LoadScene(regions[curRegion].BattleScene);
+        SceneManager.LoadScene(curRegion.BattleScene);
 
         // Reset hero
         isWalking = false;

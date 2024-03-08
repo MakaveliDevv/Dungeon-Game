@@ -68,3 +68,4 @@ MonoBehaviour:
   gotAttacked: 0
   enemiesToBattle: []
   enemyAmount: 0
+  NextSpawnPoint: 

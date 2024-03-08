@@ -10,7 +10,18 @@ public class HeroMovement : MonoBehaviour
 
     void Start()
     {
-        transform.position = GameManager.instance.nextHeroPosition;
+        if(GameManager.instance.NextSpawnPoint != "") 
+        {
+            GameObject spawnPoint = GameObject.Find(GameManager.instance.NextSpawnPoint);
+            transform.position = spawnPoint.transform.position;
+
+            GameManager.instance.NextSpawnPoint = "";
+
+        } else if(GameManager.instance.lastHeroPosition != Vector2.zero) 
+        {
+            transform.position = GameManager.instance.lastHeroPosition;
+            GameManager.instance.lastHeroPosition = Vector2.zero;
+        }
     }
 
     void FixedUpdate()
@@ -37,28 +48,24 @@ public class HeroMovement : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other) 
     {
-        if(other.CompareTag("EnterTown") || other.CompareTag("LeaveTown")) 
+        if(other.CompareTag("Teleporter")) 
         {
             CollisionHandler colHandler = other.GetComponent<CollisionHandler>();
-            GameManager.instance.nextHeroPosition = colHandler.spawnPoint.transform.position; // In new scene this info gets passed into the start
+            GameManager.instance.NextSpawnPoint = colHandler.SpawnPointName; 
             GameManager.instance.SceneToLoad = colHandler.SceneName;
             GameManager.instance.LoadNextScene();
         }
 
-        if(other.CompareTag("Region1")) 
+        if(other.CompareTag("EncounterZone")) 
         {
-            GameManager.instance.curRegion = 0;
-        }
-
-        if(other.CompareTag("Region2")) 
-        {
-            GameManager.instance.curRegion = 1;
+            RegionData region = other.gameObject.GetComponent<RegionData>();
+            GameManager.instance.curRegion = region;
         }
     }
 
     void OnTriggerStay2D(Collider2D other) 
     {
-        if(other.CompareTag("Region1") || other.CompareTag("Region2")) 
+        if(other.CompareTag("EncounterZone")) 
         {
             GameManager.instance.canGetEncounter = true;
         }
@@ -66,7 +73,7 @@ public class HeroMovement : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other) 
     {
-        if(other.CompareTag("Region1") || other.CompareTag("Region2")) 
+        if(other.CompareTag("EncounterZone")) 
         {
             GameManager.instance.canGetEncounter = false;
         }

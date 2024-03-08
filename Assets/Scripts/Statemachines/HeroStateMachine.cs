@@ -107,16 +107,19 @@ public class HeroStateMachine : MonoBehaviour
                     {
                         for (int i = 0; i < BSM.performList.Count; i++)
                         {
-                            if(BSM.performList[i].attackersGobj == this.gameObject) 
+                            if(i != 0) 
                             {
-                                BSM.performList.Remove(BSM.performList[i]);
-                            }
+                                if(BSM.performList[i].attackersGobj == this.gameObject) 
+                                {
+                                    BSM.performList.Remove(BSM.performList[i]);
+                                }
 
-                            // Check if the target of the enemy is this hero
-                            if(BSM.performList[i].attackersTarget == this.gameObject) 
-                            {
-                                // Change target to random target
-                                BSM.performList[i].attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)];
+                                // Check if the target of the enemy is this hero
+                                if(BSM.performList[i].attackersTarget == this.gameObject) 
+                                {
+                                    // Change target to random target
+                                    BSM.performList[i].attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)];
+                                }
                             }
                         }
                     }

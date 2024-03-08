@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &978629871670926884
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7762276691076002109}
+  m_Layer: 0
+  m_Name: SP_EnterTown1
+  m_TagString: Untagged
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7762276691076002109
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978629871670926884}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.09, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2401873154168971538}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4990856854576797122
 GameObject:
   m_ObjectHideFlags: 0
@@ -2836,7 +2867,7 @@ GameObject:
   - component: {fileID: 8545524777470423859}
   m_Layer: 0
   m_Name: Town GameObject
-  m_TagString: EnterTown
+  m_TagString: Teleporter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2859,6 +2890,7 @@ Transform:
   - {fileID: 2377286167575535551}
   - {fileID: 3147554600683288931}
   - {fileID: 2559725008372700482}
+  - {fileID: 7762276691076002109}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &5840421982924810963
@@ -2920,7 +2952,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SceneName: Town1
-  spawnPoint: {fileID: 8819224149925661303, guid: a6c3478f2d03bae488a58f5713e69c73, type: 3}
+  SpawnPointName: SP_EnterTown1
 --- !u!1 &8362661177969652201
 GameObject:
   m_ObjectHideFlags: 0
@@ -3242,7 +3274,7 @@ GameObject:
   - component: {fileID: 3701030166721721002}
   m_Layer: 0
   m_Name: LeaveTown1
-  m_TagString: LeaveTown
+  m_TagString: Teleporter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3302,7 +3334,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.05573543, g: 0, b: 0.5660378, a: 1}
   m_FlipX: 0
@@ -3373,7 +3405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SceneName: WorldMap
-  spawnPoint: {fileID: 8371843075227592533, guid: 8a6d7d32448a15a4aad1942e19fb6e1a, type: 3}
+  SpawnPointName: SP_LeaveTown1
 --- !u!1 &8824531043922240079
 GameObject:
   m_ObjectHideFlags: 0
