@@ -18,17 +18,10 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private void CreateRooms()
     {
         var roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
-
         HashSet<Vector2Int> floor = new();
-        if (randomWalkRooms)
-        {
-            floor = CreateRoomsRandomly(roomsList);
 
-        }
-        else
-        {
-            floor = CreateSimpleRooms(roomsList);
-        }
+        if (randomWalkRooms) floor = CreateRoomsRandomly(roomsList);
+        else floor = CreateSimpleRooms(roomsList);
 
         List<Vector2Int> roomCenters = new();
         foreach (var _room in roomsList)
@@ -54,11 +47,11 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
             foreach (var _position in roomFloor)
             {
-                if(_position.x >= (roomBounds.xMin + offset) && _position.x <= (roomBounds.xMax - offset) 
-                && _position.y >= (roomBounds.yMin + offset) && _position.y <= (roomBounds.yMax - offset)) 
-                {
+                if(_position.x >= (roomBounds.xMin + offset) 
+                && _position.x <= (roomBounds.xMax - offset) 
+                && _position.y >= (roomBounds.yMin + offset) 
+                && _position.y <= (roomBounds.yMax - offset)) 
                     floor.Add(_position);
-                }
             }
         }
 
@@ -79,9 +72,62 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             HashSet<Vector2Int> newCorridor = CreateCorridor(currentRoomCenter, closestPoint);
             currentRoomCenter = closestPoint;
             corridors.UnionWith(newCorridor);
+
+            //
         }
 
         return corridors;
+    }
+
+    // private List<Vector2Int> IncreaseCorridorBrush3By3(List<Vector2Int> _corridor)
+    // {
+    //     List<Vector2Int> newCorridor = new();
+
+    //     for (int i = 1; i < _corridor.Count; i++)
+    //     {
+    //         for (int x = -1; x < 2; x++)
+    //         {
+    //             for (int y = -1; y < 2; y++)
+    //             {
+    //                 newCorridor.Add(_corridor[i - 1] + new Vector2Int(x, y));
+    //             }
+    //         }            
+    //     }
+
+    //     return newCorridor;
+    // }
+
+    private void CreateRoomsAtDeadEnd(List<Vector2Int> _deadEnds, HashSet<Vector2Int> _roomFloors)
+    {
+        foreach (var _position in _deadEnds)
+        {
+            if(_roomFloors.Contains(_position) == false) 
+            {
+                var room = StartRandomWalk(randomWalkParameters, _position);
+                _roomFloors.UnionWith(room);
+            }
+        }
+    }
+
+    private List<Vector2Int> FindAllDeadEnds(HashSet<Vector2Int> _floorPositions)
+    {
+        List<Vector2Int> deadEnds = new();
+        foreach (var _position in _floorPositions)
+        {
+            int neighboursCount = 0;
+            foreach (var _direction in Direction2D.cardinalDirectionsList)
+            {
+                if(_floorPositions.Contains(_position + _direction)) 
+                    neighboursCount ++;
+            }
+
+            if(neighboursCount == 1) 
+            {
+                deadEnds.Add(_position);
+            }
+        }
+
+        return deadEnds;
     }
 
     private HashSet<Vector2Int> CreateCorridor(Vector2Int _currentRoomCenter, Vector2Int _destination)
