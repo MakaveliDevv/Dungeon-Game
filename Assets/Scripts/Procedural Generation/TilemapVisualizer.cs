@@ -14,23 +14,23 @@ public class TilemapVisualizer : MonoBehaviour
         PaintTiles(_floorPositions, floorTilemap, floorTile);
     }
 
-    private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
+    private void PaintTiles(IEnumerable<Vector2Int> _positions, Tilemap _tilemap, TileBase _tile)
     {
-        foreach (var _position in positions)
+        foreach (var _position in _positions)
         {
-            PaintSingleTile(tilemap, tile, _position);
+            PaintSingleTile(_tilemap, _tile, _position);
         }
     }
 
-    internal void PaintSingleBasicWall(Vector2Int position)
+    internal void PaintSingleBasicWall(Vector2Int _position)
     {
-        PaintSingleTile(wallTimeMap, wallTile, position);
+        PaintSingleTile(wallTimeMap, wallTile, _position);
     }
 
-    private void PaintSingleTile(Tilemap tilemap, TileBase tile, Vector2Int position)
+    private void PaintSingleTile(Tilemap _tilemap, TileBase _tile, Vector2Int _position)
     {
-        var tilePosition = tilemap.WorldToCell((Vector3Int)position);
-        tilemap.SetTile(tilePosition, tile);
+        var tilePosition = _tilemap.WorldToCell((Vector3Int)_position);
+        _tilemap.SetTile(tilePosition, _tile);
     }
 
     public void Clear() 

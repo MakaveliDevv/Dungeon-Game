@@ -6,24 +6,24 @@ using UnityEngine.Tilemaps;
 
 public static class WallGenerator
 {
-    public static void CreateWalls(HashSet<Vector2Int> floorPositions, TilemapVisualizer tilemapVisualizer) 
+    public static void CreateWalls(HashSet<Vector2Int> _floorPositions, TilemapVisualizer _tilemapVisualizer) 
     {
-        var basicWallPosition = FindWallsInDirections(floorPositions, Direction2D.cardinalDirectionsList);
+        var basicWallPosition = FindWallsInDirections(_floorPositions, Direction2D.cardinalDirectionsList);
         foreach (var _position in basicWallPosition)
         {
-            tilemapVisualizer.PaintSingleBasicWall(_position);   
+            _tilemapVisualizer.PaintSingleBasicWall(_position);   
         }
     }
 
-    private static HashSet<Vector2Int> FindWallsInDirections(HashSet<Vector2Int> floorPositions, List<Vector2Int> directionList)
+    private static HashSet<Vector2Int> FindWallsInDirections(HashSet<Vector2Int> _floorPositions, List<Vector2Int> _directionList)
     {
         HashSet<Vector2Int> wallPositions = new();
-        foreach (var _position in floorPositions)
+        foreach (var _position in _floorPositions)
         {
-            foreach (var _direction in directionList)
+            foreach (var _direction in _directionList)
             {
                 var neighbourPosition = _position + _direction;
-                if(!floorPositions.Contains(neighbourPosition)) 
+                if(!_floorPositions.Contains(neighbourPosition)) 
                 {
                     wallPositions.Add(neighbourPosition);
                 }
