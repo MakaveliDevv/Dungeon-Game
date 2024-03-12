@@ -1120,7 +1120,7 @@ MonoBehaviour:
   magicSpacer: {fileID: 1454741392}
   actionBtn: {fileID: 7366579815221470558, guid: 868ade008ef8e374a97fede9032d9a09, type: 3}
   targetButton: {fileID: 5793913476896135804, guid: 986231323837b7d43aa4d338e8b30d23, type: 3}
-  magicButton: {fileID: 6894804735302846710, guid: 59a4f1f7dffca33419b53f0ade86e403, type: 3}
+  magicAttButton: {fileID: 6894804735302846710, guid: 59a4f1f7dffca33419b53f0ade86e403, type: 3}
   spawnPoints:
   - {fileID: 1981267969}
   - {fileID: 306706912}
