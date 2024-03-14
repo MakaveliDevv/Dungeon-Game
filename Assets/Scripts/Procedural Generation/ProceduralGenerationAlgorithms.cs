@@ -16,7 +16,7 @@ public static class ProceduralGenerationAlgorithms
 
         for (int i = 0; i < _walkLength; i++)
         {
-            var newPosition = previousPosition + Direction2D.GetRandomCardinalDirection();
+            var newPosition = previousPosition + Directionss2D.GGetRandomCardinalDirection();
             path.Add(newPosition);
 
             previousPosition = newPosition;
@@ -25,12 +25,12 @@ public static class ProceduralGenerationAlgorithms
         return path;
     }
 
-    // METHOD TO GENERATE A RANDOM CORRIDOR
+    // METHOD TO GENERATE A CORRIDOR
     public static List<Vector2Int> RandomWalkCorridor(Vector2Int _startPosition, int _corridorLength) 
     {
         List<Vector2Int> corridor = new();
 
-        var direction = Direction2D.GetRandomCardinalDirection();
+        var direction = Directionss2D.GGetRandomCardinalDirection();
         var currentPosition = _startPosition;
         corridor.Add(currentPosition); // This is actually the start position
         
@@ -105,7 +105,7 @@ public static class ProceduralGenerationAlgorithms
     }
 }
 
-public static class Direction2D
+public static class Directionss2D
 {
     // METHOD FOR THE DIRECTIONS
     public static List<Vector2Int> cardinalDirectionsList = new()
@@ -116,7 +116,7 @@ public static class Direction2D
         new Vector2Int(-1, 0), // LEFT
     };
 
-    public static Vector2Int GetRandomCardinalDirection() 
+    public static Vector2Int GGetRandomCardinalDirection() 
     {
         return cardinalDirectionsList[Random.Range(0, cardinalDirectionsList.Count)];
     }

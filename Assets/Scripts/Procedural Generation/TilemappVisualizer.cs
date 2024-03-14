@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class TilemapVisualizer : MonoBehaviour
+public class TilemappVisualizer : MonoBehaviour
 {
     [SerializeField] private Tilemap floorTilemap, wallTimeMap;
     [SerializeField] private TileBase floorTile, wallTile;

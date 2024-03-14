@@ -7,124 +7,124 @@ using UnityEngine;
 
 public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 {
-    [SerializeField] private int corridorLength = 14, corridorCount = 5;
-    [SerializeField] [Range(.1f, 1f)] private float roomPercent = .8f;
+    // [SerializeField] private int corridorLength = 14, corridorCount = 5;
+    // [SerializeField] [Range(.1f, 1f)] private float roomPercent = .8f;
 
-    protected override void RunProceduralGeneration()
-    {
-        CorridorGenerator();
-    }
+    // protected override void RunProceduralGeneration()
+    // {
+    //     CorridorGenerator();
+    // }
 
-    private void CorridorGenerator()
-    {
-        HashSet<Vector2Int> floorPositions = new();
-        HashSet<Vector2Int> potentialRoomPositions = new();
+    // private void CorridorGenerator()
+    // {
+    //     HashSet<Vector2Int> floorPositions = new();
+    //     HashSet<Vector2Int> potentialRoomPositions = new();
 
-        List<List<Vector2Int>> corridors = CreateCorridors(floorPositions, potentialRoomPositions);
+    //     List<List<Vector2Int>> corridors = CreateCorridors(floorPositions, potentialRoomPositions);
 
-        HashSet<Vector2Int> roomPositions = CreateRooms(potentialRoomPositions);
-        List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
+    //     HashSet<Vector2Int> roomPositions = CreateRooms(potentialRoomPositions);
+    //     List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
 
-        CreateRoomsAtDeadEnd(deadEnds, roomPositions);
-        floorPositions.UnionWith(roomPositions);
+    //     CreateRoomsAtDeadEnd(deadEnds, roomPositions);
+    //     floorPositions.UnionWith(roomPositions);
 
-        for (int i = 0; i < corridors.Count; i++)
-        {
-            // corridors[i] = IncreaseCorridorSizeByOne(corridors[i]);
-            corridors[i] = IncreaseCorridorBrush3By3(corridors[i]);
-            floorPositions.UnionWith(corridors[i]);    
-        }
+    //     for (int i = 0; i < corridors.Count; i++)
+    //     {
+    //         // corridors[i] = IncreaseCorridorSizeByOne(corridors[i]);
+    //         corridors[i] = IncreaseCorridorBrush3By3(corridors[i]);
+    //         floorPositions.UnionWith(corridors[i]);    
+    //     }
 
-        tilemapVisualizer.PaintFloorTiles(floorPositions);
-        WallGenerator.CreateWalls(floorPositions, tilemapVisualizer);
-    }
+    //     tilemapVisualizer.PaintFloorTiles(floorPositions);
+    //     WallGenerator.CreateWalls(floorPositions, tilemapVisualizer);
+    // }
 
-    private List<Vector2Int> IncreaseCorridorBrush3By3(List<Vector2Int> _corridor)
-    {
-        List<Vector2Int> newCorridor = new();
+    // private List<Vector2Int> IncreaseCorridorBrush3By3(List<Vector2Int> _corridor)
+    // {
+    //     List<Vector2Int> newCorridor = new();
 
-        for (int i = 1; i < _corridor.Count; i++)
-        {
-            for (int x = -1; x < 2; x++)
-            {
-                for (int y = -1; y < 2; y++)
-                {
-                    newCorridor.Add(_corridor[i - 1] + new Vector2Int(x, y));
-                }
-            }            
-        }
+    //     for (int i = 1; i < _corridor.Count; i++)
+    //     {
+    //         for (int x = -1; x < 2; x++)
+    //         {
+    //             for (int y = -1; y < 2; y++)
+    //             {
+    //                 newCorridor.Add(_corridor[i - 1] + new Vector2Int(x, y));
+    //             }
+    //         }            
+    //     }
 
-        return newCorridor;
-    }
+    //     return newCorridor;
+    // }
 
-    private void CreateRoomsAtDeadEnd(List<Vector2Int> _deadEnds, HashSet<Vector2Int> _roomFloors)
-    {
-        foreach (var _position in _deadEnds)
-        {
-            if(_roomFloors.Contains(_position) == false) 
-            {
-                var room = StartRandomWalk(randomWalkParameters, _position);
-                _roomFloors.UnionWith(room);
-            }
-        }
-    }
+    // private void CreateRoomsAtDeadEnd(List<Vector2Int> _deadEnds, HashSet<Vector2Int> _roomFloors)
+    // {
+    //     foreach (var _position in _deadEnds)
+    //     {
+    //         if(_roomFloors.Contains(_position) == false) 
+    //         {
+    //             var room = StartRandomWalk(randomWalkParameters, _position);
+    //             _roomFloors.UnionWith(room);
+    //         }
+    //     }
+    // }
 
-    private List<Vector2Int> FindAllDeadEnds(HashSet<Vector2Int> _floorPositions)
-    {
-        List<Vector2Int> deadEnds = new();
-        foreach (var _position in _floorPositions)
-        {
-            int neighboursCount = 0;
-            foreach (var _direction in Direction2D.cardinalDirectionsList)
-            {
-                if(_floorPositions.Contains(_position + _direction)) 
-                    neighboursCount ++;
-            }
+    // private List<Vector2Int> FindAllDeadEnds(HashSet<Vector2Int> _floorPositions)
+    // {
+    //     List<Vector2Int> deadEnds = new();
+    //     foreach (var _position in _floorPositions)
+    //     {
+    //         int neighboursCount = 0;
+    //         foreach (var _direction in Direction2D.cardinalDirectionsList)
+    //         {
+    //             if(_floorPositions.Contains(_position + _direction)) 
+    //                 neighboursCount ++;
+    //         }
 
-            if(neighboursCount == 1) 
-            {
-                deadEnds.Add(_position);
-            }
-        }
+    //         if(neighboursCount == 1) 
+    //         {
+    //             deadEnds.Add(_position);
+    //         }
+    //     }
 
-        return deadEnds;
-    }
+    //     return deadEnds;
+    // }
 
-    private HashSet<Vector2Int> CreateRooms(HashSet<Vector2Int> _potentialRoomPositions)
-    {
-        HashSet<Vector2Int> roomPositions = new();
-        int roomToCreateCount = Mathf.RoundToInt(_potentialRoomPositions.Count * roomPercent);
+    // private HashSet<Vector2Int> CreateRooms(HashSet<Vector2Int> _potentialRoomPositions)
+    // {
+    //     HashSet<Vector2Int> roomPositions = new();
+    //     int roomToCreateCount = Mathf.RoundToInt(_potentialRoomPositions.Count * roomPercent);
 
-        List<Vector2Int> roomToCreate = _potentialRoomPositions.OrderBy(x => Guid.NewGuid()).Take(roomToCreateCount).ToList();
+    //     List<Vector2Int> roomToCreate = _potentialRoomPositions.OrderBy(x => Guid.NewGuid()).Take(roomToCreateCount).ToList();
 
-        foreach (var _roomPosition in roomToCreate)
-        {
-            var roomFloor = StartRandomWalk(randomWalkParameters, _roomPosition);
-            roomPositions.UnionWith(roomFloor);
-        }
+    //     foreach (var _roomPosition in roomToCreate)
+    //     {
+    //         var roomFloor = StartRandomWalk(randomWalkParameters, _roomPosition);
+    //         roomPositions.UnionWith(roomFloor);
+    //     }
 
-        return roomPositions;
-    }
+    //     return roomPositions;
+    // }
 
-    private List<List<Vector2Int>> CreateCorridors(HashSet<Vector2Int> _floorPositions, HashSet<Vector2Int> _potentialRoomPositions)
-    {
-        var currentPosition = startPosition;
-        _potentialRoomPositions.Add(currentPosition);
+    // private List<List<Vector2Int>> CreateCorridors(HashSet<Vector2Int> _floorPositions, HashSet<Vector2Int> _potentialRoomPositions)
+    // {
+    //     var currentPosition = startPosition;
+    //     _potentialRoomPositions.Add(currentPosition);
 
-        List<List<Vector2Int>> corridors = new();
+    //     List<List<Vector2Int>> corridors = new();
 
-        for (int i = 0; i < corridorCount; i++)
-        {
-            var corridor = ProceduralGenerationAlgorithms.RandomWalkCorridor(currentPosition, corridorLength);
-            corridors.Add(corridor);
+    //     for (int i = 0; i < corridorCount; i++)
+    //     {
+    //         var corridor = ProceduralGenerationAlgorithms.RandomWalkCorridor(currentPosition, corridorLength);
+    //         corridors.Add(corridor);
             
-            currentPosition = corridor[corridor.Count - 1];
-            _potentialRoomPositions.Add(currentPosition);
-            _floorPositions.UnionWith(corridor);
-        }
+    //         currentPosition = corridor[corridor.Count - 1];
+    //         _potentialRoomPositions.Add(currentPosition);
+    //         _floorPositions.UnionWith(corridor);
+    //     }
 
-        return corridors;
-    }
+    //     return corridors;
+    // }
 
     // public List<Vector2Int> IncreaseCorridorSizeByOne(List<Vector2Int> _corridor)
     // {

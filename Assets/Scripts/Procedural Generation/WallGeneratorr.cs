@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public static class WallGenerator
+public static class WallGeneratorr
 {
-    public static void CreateWalls(HashSet<Vector2Int> _floorPositions, TilemapVisualizer _tilemapVisualizer) 
+    public static void CreateWalls(HashSet<Vector2Int> _floorPositions, TilemappVisualizer _tilemapVisualizer) 
     {
-        var basicWallPosition = FindWallsInDirections(_floorPositions, Direction2D.cardinalDirectionsList);
+        var basicWallPosition = FindWallsInDirections(_floorPositions, Directionss2D.cardinalDirectionsList);
         foreach (var _position in basicWallPosition)
         {
             _tilemapVisualizer.PaintSingleBasicWall(_position);   
