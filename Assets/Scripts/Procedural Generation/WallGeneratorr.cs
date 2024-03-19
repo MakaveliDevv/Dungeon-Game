@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 
 public static class WallGeneratorr
 {
-    public static void CreateWalls(HashSet<Vector2Int> _floorPositions, TilemappVisualizer _tilemapVisualizer) 
+    public static void CreateWalls(HashSet<Vector2Int> _floorPositions, TilemapVisualizer _tilemapVisualizer) 
     {
         var basicWallPosition = FindWallsInDirections(_floorPositions, Directionss2D.cardinalDirectionsList);
         foreach (var _position in basicWallPosition)
@@ -32,4 +32,8 @@ public static class WallGeneratorr
 
         return wallPositions;
     }
+
+
+
+    // 'map_name'.get_world_position_tiles_from('map_name'.floortilemap, spawnlocation)
 }

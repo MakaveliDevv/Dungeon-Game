@@ -152,7 +152,9 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      flamethrower_2_2_0: 6772795533824806151
+      flamethrower_2_2_1: -7248348700250429367
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

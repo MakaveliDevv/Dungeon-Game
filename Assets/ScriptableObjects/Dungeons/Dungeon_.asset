@@ -9,9 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0d199d080ec59e4ca6857454c05e9f0, type: 3}
-  m_Name: SimpleRandomWalkParameters_
+  m_Script: {fileID: 11500000, guid: d03b98470dbf7c140813f387d5038821, type: 3}
+  m_Name: Dungeon_
   m_EditorClassIdentifier: 
   iterations: 25
-  walkRadius: 100
-  startRandomlyEachIteration: 0
+  walkRadius: 150
+  startRandomlyEachIteration: 1
+  width: 150
+  height: 150
+  minRoomWidth: 35
+  minRoomHeight: 35
+  amountOfRooms: 0
+  corridorLength: 0
+  offset: 1

@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 {
-    [SerializeField] private int minRoomWidth = 4, minRoomHeight = 4;
-    [SerializeField] private int dungeonWidth = 20, dungeonHeight = 20;
+    // [SerializeField] private int minRoomWidth = 4, minRoomHeight = 4;
+    // [SerializeField] private int dungeonWidth = 20, dungeonHeight = 20;
 
-    [SerializeField] [Range(0, 10)] private int offset = 1;
-    [SerializeField] private bool randomWalkRooms = false;
+    // [SerializeField] [Range(0, 10)] private int offset = 1;
+    [SerializeField] private bool randomPathGeneration = false;
 
     public float distanceBetweenRooms;
     public float brushSizeX, brushSizeY;
@@ -21,10 +21,14 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private void CreateRooms()
     {
-        var roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
+        var roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning
+        (
+            new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeon.width, dungeon.height, 0)), dungeon.minRoomWidth, dungeon.minRoomHeight
+        );
+        
         HashSet<Vector2Int> floor = new();
 
-        if (randomWalkRooms) floor = CreateRoomsRandomly(roomsList);
+        if (randomPathGeneration) floor = CreateRoomsRandomly(roomsList);
         else floor = CreateSimpleRooms(roomsList);
 
         List<Vector2Int> roomCenters = new();
@@ -48,39 +52,20 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         {
             var roomBounds = _roomsList[i];
             var roomCenter = new Vector2Int(Mathf.RoundToInt(roomBounds.center.x), Mathf.RoundToInt(roomBounds.center.y));
-            var roomFloor = StartRandomWalk(randomWalkParameters, roomCenter);
+            var roomFloor = StartRandomPath(dungeon, roomCenter);
 
             foreach (var _position in roomFloor)
             {
-                if(_position.x >= (roomBounds.xMin + offset) 
-                && _position.x <= (roomBounds.xMax - offset) 
-                && _position.y >= (roomBounds.yMin + offset) 
-                && _position.y <= (roomBounds.yMax - offset)) 
+                if(_position.x >= (roomBounds.xMin + dungeon.offset) 
+                && _position.x <= (roomBounds.xMax - dungeon.offset) 
+                && _position.y >= (roomBounds.yMin + dungeon.offset) 
+                && _position.y <= (roomBounds.yMax - dungeon.offset)) 
                     floor.Add(_position);
             }
         }
 
         return floor;
     }
-
-    // private HashSet<Vector2Int> ConnectRooms(List<Vector2Int> _roomCenters)
-    // {
-    //     HashSet<Vector2Int> corridors = new();
-    //     var currentRoomCenter = _roomCenters[Random.Range(0, _roomCenters.Count)];
-    //     _roomCenters.Remove(currentRoomCenter);
-        
-    //     while(_roomCenters.Count > 0)
-    //     {
-    //         Vector2Int closestPoint = FindClosestPointTo(currentRoomCenter, _roomCenters);
-    //         _roomCenters.Remove(closestPoint);
-
-    //         HashSet<Vector2Int> newCorridor = CreateCorridor(currentRoomCenter, closestPoint);
-    //         currentRoomCenter = closestPoint;
-    //         corridors.UnionWith(newCorridor);
-    //     }
-
-    //     return corridors;
-    // }
 
     private HashSet<Vector2Int> ConnectRooms(List<Vector2Int> _roomCenters)
     {
@@ -99,7 +84,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             List<Vector2Int> newCorridorList = new(corridor);
 
             // Apply increase method here
-            newCorridorList = IncreaseCorridorBrush(newCorridorList);
+            newCorridorList = IncreaseBrushSize(newCorridorList);
 
             // Convert newCorridorList back to HashSet<Vector2Int>
             HashSet<Vector2Int> expandedCorridor = new(newCorridorList);
@@ -180,9 +165,9 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         HashSet<Vector2Int> floor = new();
         foreach (var _room in _roomsList)
         {
-            for (int col = offset; col < _room.size.x - offset ; col++)
+            for (int col = dungeon.offset; col < _room.size.x - dungeon.offset ; col++)
             {
-                for (int row = offset; row < _room.size.y - offset ; row++)
+                for (int row = dungeon.offset; row < _room.size.y - dungeon.offset ; row++)
                 {
                     Vector2Int position = (Vector2Int)_room.min + new Vector2Int(col, row);
                     floor.Add(position);
@@ -194,7 +179,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
     }
 
 
-    private List<Vector2Int> IncreaseCorridorBrush(List<Vector2Int> _corridor)
+    private List<Vector2Int> IncreaseBrushSize(List<Vector2Int> _corridor)
     {
         List<Vector2Int> newCorridor = new();
 

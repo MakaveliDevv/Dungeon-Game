@@ -5,75 +5,57 @@ using UnityEngine;
 public static class ProceduralGenerationAlgorithms
 {
     // METHOD TO GENERATE A RANDOM PATH
-    public static HashSet<Vector2Int> SimpleRandomWalk(Vector2Int _startPosition, int _walkLength) 
+    public static HashSet<Vector2Int> RandomPathGeneration(Vector2Int _startPos, int _walkRadius) 
     {
         HashSet<Vector2Int> path = new()
         {
-            _startPosition
+            _startPos
         };
         
-        var previousPosition = _startPosition;
+        var previousPos = _startPos;
 
-        for (int i = 0; i < _walkLength; i++)
+        for (int i = 0; i < _walkRadius; i++)
         {
-            var newPosition = previousPosition + Directionss2D.GGetRandomCardinalDirection();
-            path.Add(newPosition);
+            var newPos = previousPos + Directionss2D.GGetRandomCardinalDirection();
+            path.Add(newPos);
 
-            previousPosition = newPosition;
+            previousPos = newPos;
         }
 
         return path;
     }
 
-    // METHOD TO GENERATE A CORRIDOR
-    public static List<Vector2Int> RandomWalkCorridor(Vector2Int _startPosition, int _corridorLength) 
-    {
-        List<Vector2Int> corridor = new();
-
-        var direction = Directionss2D.GGetRandomCardinalDirection();
-        var currentPosition = _startPosition;
-        corridor.Add(currentPosition); // This is actually the start position
-        
-        for (int i = 0; i < _corridorLength; i++)
-        {
-            currentPosition += direction;
-            corridor.Add(currentPosition);
-        }
-
-        return corridor;
-    }
-
     // ALGORITHM TO GENERATE SPLITTED ROOMS IN AN AREA
-    public static List<BoundsInt> BinarySpacePartitioning(BoundsInt _spaceToSplit, int _minWidth, int _minHeight) 
+    public static List<BoundsInt> BinarySpacePartitioning(BoundsInt _spaceToSplit, int _minWidthRoom, int _minHeightRoom) 
     {
         Queue<BoundsInt> roomsQueue = new();
         List<BoundsInt> roomsList = new();
 
-        roomsQueue.Enqueue(_spaceToSplit);
+        roomsQueue.Enqueue(_spaceToSplit); // Add the space to split into the queue
 
-        while(roomsQueue.Count > 0) 
+        while(roomsQueue.Count > 0) // Check if the queue containts more than 1 element
         {
             var room = roomsQueue.Dequeue();
-            if(room.size.x >= _minWidth && room.size.y >= _minHeight) 
+            if(room.size.x >= _minWidthRoom && room.size.y >= _minHeightRoom) // Check if size of room is equal to greater than the minimal width and height
             {
                 if(Random.value < .5f) 
                 {
-                    if(room.size.y >= _minHeight * 2) 
-                        SplitHorizontally(_minHeight, roomsQueue, room);
+                    if(room.size.y >= _minHeightRoom * 2) 
+                        SplitHorizontally(_minHeightRoom, roomsQueue, room);
 
-                    else if(room.size.x >= _minWidth * 2) 
-                        SplitVertically(_minWidth, roomsQueue, room);
+                    else if(room.size.x >= _minWidthRoom * 2) 
+                        SplitVertically(_minWidthRoom, roomsQueue, room);
 
                     else
                     roomsList.Add(room);                    
                     
                 } else 
                 {
-                    if(room.size.x >= _minWidth * 2) 
-                        SplitVertically(_minWidth, roomsQueue, room);
+                    if(room.size.x >= _minWidthRoom * 2) 
+                        SplitVertically(_minWidthRoom, roomsQueue, room);
  
-                    else if(room.size.y >= _minHeight * 2) 
-                        SplitHorizontally(_minHeight, roomsQueue, room);
+                    else if(room.size.y >= _minHeightRoom * 2) 
+                        SplitHorizontally(_minHeightRoom, roomsQueue, room);
                     
                     else
                     roomsList.Add(room);    
