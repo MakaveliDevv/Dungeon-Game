@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03b98470dbf7c140813f387d5038821, type: 3}
   m_Name: Dungeon_
   m_EditorClassIdentifier: 
-  iterations: 25
+  iterations: 35
   walkRadius: 150
   startRandomlyEachIteration: 1
-  width: 150
-  height: 150
-  minRoomWidth: 35
-  minRoomHeight: 35
+  width: 100
+  height: 100
+  minRoomWidth: 25
+  minRoomHeight: 25
   amountOfRooms: 0
   corridorLength: 0
-  offset: 1
+  offset: 4
