@@ -1,22 +1,33 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class TilemapVisualizer : MonoBehaviour
 {
-    [SerializeField] private Tilemap floorTilemap, wallTimeMap, spawnLocationMap;
+    [SerializeField] private Tilemap floorTilemap, wallTimeMap, spawnLocationMap, enemyMap;
     [SerializeField] private TileBase floorTile, wallTile, spawnPointTile;
 
     public void PaintFloorTiles(IEnumerable<Vector2Int> _floorPositions)
     {
         PaintTiles(_floorPositions, floorTilemap, floorTile);
     }
-
+    
     public void PaintSpawnPoints(IEnumerable<Vector2Int> _spawnPointPositions)
     {
         PaintTiles(_spawnPointPositions, spawnLocationMap, spawnPointTile);
+    }
+
+    public void PaintEnemies(IEnumerable<Vector2Int> _enemyPositions, GameObject enemyPrefab)
+    {
+        foreach (var enemyPosition in _enemyPositions)
+        {
+            // Instantiate the enemy prefab at the enemy position
+            Vector3Int tilePosition = (Vector3Int)enemyPosition;
+            Instantiate(enemyPrefab, enemyMap.CellToWorld(tilePosition), Quaternion.identity, enemyMap.transform);
+        }
     }
 
     private void PaintTiles(IEnumerable<Vector2Int> _positions, Tilemap _tilemap, TileBase _tile)

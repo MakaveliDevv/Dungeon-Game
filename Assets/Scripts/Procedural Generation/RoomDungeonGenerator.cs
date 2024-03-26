@@ -1,35 +1,56 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 { 
-    [SerializeField] private bool randomPathGeneration = false;
-    public float distanceBetweenRooms;
-    public float brushSizeX, brushSizeY;
-    private List<BoundsInt> roomsList;
-    public float enemySpawnRadius = 5f;
-
-    public List<GameObject> enemiesType = new();
-    public int enemiesAmount;
-
-
     protected override void RunProceduralGeneration()
     {
         CreateRooms();
     }
 
+    // private void CreateRooms()
+    // {
+    //     roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning
+    //     (
+    //         new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeon.width, dungeon.height, 0)), dungeon.minRoomWidth, dungeon.minRoomHeight
+    //     );
+        
+    //     HashSet<Vector2Int> floor = new();
+
+    //     if (randomPathGeneration) floor = CreateRoomsRandomly(roomsList);
+    //     else floor = CreateSimpleRooms(roomsList);
+
+    //     List<Vector2Int> roomCenters = new();
+    //     foreach (var _room in roomsList)
+    //     {
+    //         Vector2Int center = (Vector2Int)Vector3Int.RoundToInt(_room.center);
+    //         roomCenters.Add(center);
+    //     }
+
+    //     HashSet<Vector2Int> corridors = ConnectRooms(roomCenters);
+    //     floor.UnionWith(corridors);
+
+    //     tilemapVisualizer.PaintFloorTiles(floor);
+    //     WallGeneratorr.CreateWalls(floor, tilemapVisualizer);
+    // }
+
     private void CreateRooms()
     {
-        roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning
-        (
+        roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(
             new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeon.width, dungeon.height, 0)), dungeon.minRoomWidth, dungeon.minRoomHeight
         );
         
         HashSet<Vector2Int> floor = new();
 
-        if (randomPathGeneration) floor = CreateRoomsRandomly(roomsList);
-        else floor = CreateSimpleRooms(roomsList);
+        if (randomPathGeneration) 
+            floor = CreateRoomsRandomly(roomsList);
+        else 
+            floor = CreateSimpleRooms(roomsList);
+
+        // Generate spawn points within the floor positions
+        HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floor);
 
         List<Vector2Int> roomCenters = new();
         foreach (var _room in roomsList)
@@ -43,77 +64,56 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         tilemapVisualizer.PaintFloorTiles(floor);
         WallGeneratorr.CreateWalls(floor, tilemapVisualizer);
+
+        // Visualize spawn points using TilemapVisualizer
+        tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
+
+        // Spawn enemies around spawn points
+        SpawnEnemiesAroundSpawnPoints(floorSpawnPoints, enemySpawnRadius);
     }
 
-    private void OnDrawGizmos()
+    private HashSet<Vector2Int> GenerateSpawnPoints(HashSet<Vector2Int> floor)
     {
-        // Draw room bounds for each room in the dungeon
-        foreach (var roomBounds in roomsList)
+        HashSet<Vector2Int> floorSpawnPoints = new();
+
+        // Generate spawn points randomly within the floor positions
+        int randomMaxSpawnPoints = Mathf.Min(floor.Count, maxSpawnPoints); // Limit to 10 spawn points
+
+        for (int i = 0; i < randomMaxSpawnPoints; i++)
         {
-            DrawRoomBounds(roomBounds);
-        }
-    }
+            // Generate a candidate spawn point
+            Vector2Int spawnPoint = floor.ElementAt(Random.Range(0, floor.Count));
 
-   private void DrawRoomBounds(BoundsInt roomBounds)
-    {
-        Vector3Int min = roomBounds.min;
-        Vector3Int max = roomBounds.max;
+            // Check if the candidate spawn point is too close to a wall
+            bool tooCloseToWall = IsTooCloseToWall(spawnPoint, floorSpawnPoints);
 
-        Vector3 topLeft = new(min.x, min.y, 0);
-        Vector3 topRight = new(max.x, min.y, 0);
-        Vector3 bottomRight = new(max.x, max.y, 0);
-        Vector3 bottomLeft = new(min.x, max.y, 0);
-
-        // Draw lines around the room bounds
-        Debug.DrawLine(topLeft, topRight, Color.blue);
-        Debug.DrawLine(topRight, bottomRight, Color.blue);
-        Debug.DrawLine(bottomRight, bottomLeft, Color.blue);
-        Debug.DrawLine(bottomLeft, topLeft, Color.blue);
-    }
-
-    private void SpawnEnemiesAroundSpawnPoints(HashSet<Vector2Int> floorSpawnPoints, float radius)
-    {
-        foreach (var spawnPoint in floorSpawnPoints)
-        {
-            // Generate a random number of enemies to spawn around this spawn point
-            int numEnemies = Random.Range(1, 4); // Change the range as needed
-
-            for (int i = 0; i < numEnemies; i++)
+            // If the candidate spawn point is not too close to a wall, add it to the list of spawn points
+            if (!tooCloseToWall)
             {
-                // Generate a random angle to determine the direction
-                float angle = Random.Range(0f, Mathf.PI * 2f);
-
-                // Calculate random position within the specified radius
-                Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * Random.Range(0f, radius);
-                Vector2Int enemySpawnPosition = new((int)(spawnPoint.x + offset.x), (int)(spawnPoint.y + offset.y));
-
-                // Spawn your enemy at the calculated position
-                SpawnEnemyAt(enemySpawnPosition); // You need to implement this method to actually spawn the enemy
+                floorSpawnPoints.Add(spawnPoint);
             }
         }
+
+        return floorSpawnPoints;
     }
 
-    private void SpawnEnemyAt(Vector2Int position)
+    private bool IsTooCloseToWall(Vector2Int position, HashSet<Vector2Int> floor)
     {
-        // Get amount of enemies
-        float amount = Random.Range(0, enemiesAmount + 1);
+        float minDistanceToWallSquared = 36f; // Minimum squared distance to be considered too close to a wall
 
-        // Get type of enemies
-        int typeIndex = Random.Range(0, enemiesType.Count); 
-
-        GameObject enemyPrefab = enemiesType[typeIndex];
-
-        Vector3 spawnPosition = new(position.x, position.y, 0f);
-
-
-        // Spawn the enemies at the position
-        for (int i = 0; i < amount; i++)
+        foreach (var wallPosition in floor)
         {
-            // Instantiate the enemy prefab at the position
-            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+            // Calculate the squared distance between the spawn point and the wall position
+            float distanceSquared = (position - wallPosition).sqrMagnitude;
+
+            // If the squared distance is less than the minimum allowed, the spawn point is too close to a wall
+            if (distanceSquared < minDistanceToWallSquared)
+            {
+                return true;
+            }
         }
 
-        Debug.Log($"Spawned {amount} of {enemyPrefab.name} at position {position}");
+        return false;
     }
 
     private HashSet<Vector2Int> CreateRoomsRandomly(List<BoundsInt> _roomsList)
@@ -126,9 +126,6 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             var roomBounds = _roomsList[i];
             var roomCenter = new Vector2Int(Mathf.RoundToInt(roomBounds.center.x), Mathf.RoundToInt(roomBounds.center.y));
             var roomFloor = StartRandomPath(dungeon, roomCenter);
-
-            // Generate spawn points within the room bounds
-            GenerateSpawnPoints(roomBounds, floorSpawnPoints);
 
             foreach (var _position in roomFloor)
             {
@@ -143,29 +140,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         // Visualize spawn points using TilemapVisualizer
         tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
 
-        SpawnEnemiesAroundSpawnPoints(floorSpawnPoints, enemySpawnRadius);
-
         return floor;
-    }
-
-
-    private void GenerateSpawnPoints(BoundsInt roomBounds, HashSet<Vector2Int> floorSpawnPoints)
-    {
-        int numSpawnPointsPerRoom = Random.Range(1, 6);
-
-        for (int j = 0; j < numSpawnPointsPerRoom; j++)
-        {
-            // Generate a random direction
-            // Vector2Int direction = new(Random.Range(-1, 1), Random.Range(-1, 1));
-
-            // Generate random spawn point within the room bounds
-            Vector2Int spawnPoint = new(
-                (int)Mathf.Clamp(roomBounds.center.x, roomBounds.xMin, roomBounds.xMax),
-                (int)Mathf.Clamp(roomBounds.center.y, roomBounds.yMin, roomBounds.yMax));
-
-            floorSpawnPoints.Add(spawnPoint);
-            // Debug.Log($"Room {j + 1} has {numSpawnPointsPerRoom} spawn point(s).");
-        }
     }
 
     private HashSet<Vector2Int> ConnectRooms(List<Vector2Int> _roomCenters)
@@ -276,7 +251,92 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return floor;
     }
 
+    
+    private void SpawnEnemiesAroundSpawnPoints(HashSet<Vector2Int> floorSpawnPoints, float radius)
+    {
+        foreach (var spawnPoint in floorSpawnPoints)
+        {
+            int numEnemies = Random.Range(1, 4); 
 
+            for (int i = 0; i < numEnemies; i++)
+            {
+                float angle = Random.Range(0f, Mathf.PI * 2f);
+
+                Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * Random.Range(0f, radius);
+                Vector2Int enemySpawnPosition = new((int)(spawnPoint.x + offset.x), (int)(spawnPoint.y + offset.y));
+
+                bool canSpawn = CanSpawnEnemyAt(enemySpawnPosition);
+                if (canSpawn)
+                {
+                    SpawnEnemyAt(enemySpawnPosition);
+                }
+            }
+        }
+    }
+    
+    private void SpawnEnemyAt(Vector2Int position)
+    {
+        // Get amount of enemies
+        float amount = Random.Range(0, enemiesAmount + 1);
+
+        // Get type of enemies
+        int typeIndex = Random.Range(0, enemiesType.Count); 
+
+        GameObject enemyPrefab = enemiesType[typeIndex];
+
+        Vector3 spawnPosition = new(position.x, position.y, 0f);
+
+
+        // Spawn the enemies at the position
+        for (int i = 0; i < amount; i++)
+        {
+            // Instantiate the enemy prefab at the position
+            GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity) as GameObject;
+            enemies.Add(newEnemy);
+        }
+
+        Debug.Log($"Spawned {amount} of {enemyPrefab.name} at position {position}");
+    }
+
+    private bool CanSpawnEnemyAt(Vector2Int position)
+    {
+        foreach (var enemy in enemies)
+        {
+            Vector2 enemyPosition = new(enemy.transform.position.x, enemy.transform.position.y);
+            float distance = Vector2.Distance(position, enemyPosition);
+
+            if (distance < checkRadius)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // private void SpawnEnemiesAroundSpawnPoints(HashSet<Vector2Int> floorSpawnPoints, float radius)
+    // {
+    //     foreach (var spawnPoint in floorSpawnPoints)
+    //     {
+    //         // Generate a random number of enemies to spawn around this spawn point
+    //         int numEnemies = Random.Range(1, 4); // Change the range as needed
+
+    //         for (int i = 0; i < numEnemies; i++)
+    //         {
+    //             // Generate a random angle to determine the direction
+    //             float angle = Random.Range(0f, Mathf.PI * 2f);
+
+    //             // Calculate random position within the specified radius
+    //             Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * Random.Range(0f, radius);
+    //             Vector2Int enemySpawnPosition = new((int)(spawnPoint.x + offset.x), (int)(spawnPoint.y + offset.y));
+
+    //             // Spawn your enemy at the calculated position
+    //             SpawnEnemyAt(enemySpawnPosition); // You need to implement this method to actually spawn the enemy
+    //         }
+    //     }
+    // }
+
+    
     private List<Vector2Int> IncreaseBrushSize(List<Vector2Int> _corridor)
     {
         List<Vector2Int> newCorridor = new();
@@ -293,5 +353,31 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         }
 
         return newCorridor;
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Draw room bounds for each room in the dungeon
+        foreach (var roomBounds in roomsList)
+        {
+            DrawRoomBounds(roomBounds);
+        }
+    }
+
+    private void DrawRoomBounds(BoundsInt roomBounds)
+    {
+        Vector3Int min = roomBounds.min;
+        Vector3Int max = roomBounds.max;
+
+        Vector3 topLeft = new(min.x, min.y, 0);
+        Vector3 topRight = new(max.x, min.y, 0);
+        Vector3 bottomRight = new(max.x, max.y, 0);
+        Vector3 bottomLeft = new(min.x, max.y, 0);
+
+        // Draw lines around the room bounds
+        Debug.DrawLine(topLeft, topRight, Color.blue);
+        Debug.DrawLine(topRight, bottomRight, Color.blue);
+        Debug.DrawLine(bottomRight, bottomLeft, Color.blue);
+        Debug.DrawLine(bottomLeft, topLeft, Color.blue);
     }
 }
