@@ -6,24 +6,37 @@ using UnityEngine.Tilemaps;
 
 public static class WallGeneratorr
 {
-    public static void CreateWalls(HashSet<Vector2Int> _floorPositions, TilemapVisualizer _tilemapVisualizer) 
+    // public static void CreateWalls(HashSet<Vector2Int> floorPositions, TilemapVisualizer tilemapVisualizer) 
+    // {
+    //     var basicWallPosition = FindWallsInDirections(floorPositions, Directionss2D.cardinalDirectionsList);
+    //     foreach (var position in basicWallPosition)
+    //     {
+    //         tilemapVisualizer.PaintSingleBasicWall(position);   
+    //     }
+    // }
+
+    public static HashSet<Vector2Int> CreateWalls(HashSet<Vector2Int> floorPositions, TilemapVisualizer tilemapVisualizer)
     {
-        var basicWallPosition = FindWallsInDirections(_floorPositions, Directionss2D.cardinalDirectionsList);
-        foreach (var _position in basicWallPosition)
+        List<Vector2Int> directionList = Directionss2D.cardinalDirectionsList; // Assuming directions are hardcoded
+        HashSet<Vector2Int> wallPositions = FindWallsInDirections(floorPositions, directionList);
+
+        foreach (var position in wallPositions)
         {
-            _tilemapVisualizer.PaintSingleBasicWall(_position);   
+            tilemapVisualizer.PaintSingleBasicWall(position);   
         }
+
+        return wallPositions;
     }
 
-    private static HashSet<Vector2Int> FindWallsInDirections(HashSet<Vector2Int> _floorPositions, List<Vector2Int> _directionList)
+    public static HashSet<Vector2Int> FindWallsInDirections(HashSet<Vector2Int> floorPositions, List<Vector2Int> directionList)
     {
         HashSet<Vector2Int> wallPositions = new();
-        foreach (var _position in _floorPositions)
+        foreach (var position in floorPositions)
         {
-            foreach (var _direction in _directionList)
+            foreach (var direction in directionList)
             {
-                var neighbourPosition = _position + _direction;
-                if(!_floorPositions.Contains(neighbourPosition)) 
+                var neighbourPosition = position + direction;
+                if(!floorPositions.Contains(neighbourPosition)) 
                 {
                     wallPositions.Add(neighbourPosition);
                 }
@@ -32,8 +45,4 @@ public static class WallGeneratorr
 
         return wallPositions;
     }
-
-
-
-    // 'map_name'.get_world_position_tiles_from('map_name'.floortilemap, spawnlocation)
 }
