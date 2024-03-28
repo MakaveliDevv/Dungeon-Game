@@ -10,6 +10,7 @@ TagManager:
   - DeadEnemy
   - Teleporter
   - EncounterZone
+  - Canvas
   layers:
   - Default
   - TransparentFX

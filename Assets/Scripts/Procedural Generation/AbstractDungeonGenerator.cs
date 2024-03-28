@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class AbstractDungeonGenerator : MonoBehaviour
 {
@@ -12,19 +14,16 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [Header("Dungeon Stuff")]
     [SerializeField] protected Dungeon dungeon; // Scriptable object dungeon
     [SerializeField] protected List<BoundsInt> roomsList;
+    [SerializeField] protected int roomCount;
     [SerializeField] protected bool randomPathGeneration = false;
     protected float distanceBetweenRooms;
     [SerializeField] protected float brushSizeX, brushSizeY;
 
     [Header("Spawnpoints")]
-    [SerializeField] protected List<Vector2Int> spawnPoints_List = new(); // List to double check amount of spawn points
     [SerializeField] protected List<GameObject> gameObject_SpawnPoints_List = new(); // List to for the gameobjects spawnpoints
     [SerializeField] protected GameObject spawnPointPrefab;
     [SerializeField] protected int maxSpawnPoints = 10;
-    [SerializeField] protected int spawnPointAmount;
     [SerializeField] protected Vector2Int spawnPoint;
-
-
 
     [Header("Enemy Stuff")]
     [SerializeField] protected List<GameObject> enemiesType = new();
@@ -39,11 +38,10 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
 
     public void GenerateDungeon() 
     {
-        tilemapVisualizer.Clear();
-        DestroySpawnPointsInScene();
+        tilemapVisualizer.Clear(); // Clear the tilemap
 
-        spawnPoints_List.Clear();
-        gameObject_SpawnPoints_List.Clear();
+        DestroySpawnPointsInScene(); // Destroy all spawn points gameobjects in the scene
+        gameObject_SpawnPoints_List.Clear(); // Clear the list of the spawn point gameobjects
 
         DestroyPlayerInScene();
         playerList.Clear();
@@ -51,6 +49,10 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
         DestroyEnemiesInScene();
         enemies.Clear();
 
+        // DestroyButtons();
+        // btnList.Clear();
+
+        roomCount = 0;
         RunProceduralGeneration();
     }
 
@@ -80,5 +82,13 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
             DestroyImmediate(point);
         }
     }
+
+    // private void DestroyButtons() 
+    // {
+    //     foreach (GameObject btn in btnList)
+    //     {
+    //         DestroyImmediate(btn);
+    //     }
+    // }
     
 }

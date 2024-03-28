@@ -48,26 +48,32 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0}
   dungeon: {fileID: 11400000, guid: f6a0816281d621b4aa00a4c49f023350, type: 2}
   roomsList:
-  - m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 37, y: 49, z: 0}
-  - m_Position: {x: 37, y: 0, z: 0}
-    m_Size: {x: 45, y: 32, z: 0}
-  - m_Position: {x: 0, y: 50, z: 0}
-    m_Size: {x: 37, y: 38, z: 0}
-  - m_Position: {x: 37, y: 33, z: 0}
-    m_Size: {x: 45, y: 46, z: 0}
+  - m_Position: {x: 63, y: 0, z: 0}
+    m_Size: {x: 37, y: 30, z: 0}
+  - m_Position: {x: 44, y: 36, z: 0}
+    m_Size: {x: 47, y: 46, z: 0}
+  - m_Position: {x: 0, y: 30, z: 0}
+    m_Size: {x: 44, y: 27, z: 0}
+  roomCount: 3
   randomPathGeneration: 1
   brushSizeX: 8
   brushSizeY: 8
-  spawnPoints_List: []
-  gameObject_SpawnPoints_List: []
+  gameObject_SpawnPoints_List:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   spawnPointPrefab: {fileID: 4214174203591168327, guid: ad592723ab9276246929fd0665b8badd, type: 3}
+  maxSpawnPoints: 10
+  spawnPoint: {x: 24, y: 65}
   enemiesType:
   - {fileID: 8877997281355131475, guid: 08e4f4aa07ed57d4e8d344bce5dda37f, type: 3}
   enemySpawnRadius: 0
   enemiesAmount: 1
   checkRadius: 0
-  maxSpawnPoints: 10
   playerPrefab: {fileID: 4338385939813333793, guid: af992e96d757c9a4b9003ad1e1dc3c18, type: 3}
   playerList:
   - {fileID: 0}

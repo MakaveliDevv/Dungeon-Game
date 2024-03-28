@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
@@ -16,13 +17,16 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeon.width, dungeon.height, 0)), dungeon.minRoomWidth, dungeon.minRoomHeight
         );
 
-        HashSet<Vector2Int> floor = CreateRoomsRandomly(roomsList);
-
+        HashSet<Vector2Int> floor = GenerateRooms(roomsList);
         List<Vector2Int> roomCenters = new();
+        Vector2Int center;
+       
+        
         foreach (var _room in roomsList)
         {
-            Vector2Int center = (Vector2Int)Vector3Int.RoundToInt(_room.center);
+            center = (Vector2Int)Vector3Int.RoundToInt(_room.center);
             roomCenters.Add(center);
+            roomCount++;
         }
 
         // Connect the rooms
@@ -41,8 +45,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         foreach (Vector2Int point in floorSpawnPoints)
         {
-            bool canSpawn = CanSpawnEnemyAt(point);
-            if (canSpawn)
+            if (CanSpawnEnemyAt(point))
             {
                 SpawnEnemyAt(point);
                 SpawnSpawnPointAt(point);
@@ -55,7 +58,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
     }
   
-    private HashSet<Vector2Int> CreateRoomsRandomly(List<BoundsInt> _roomsList)
+    private HashSet<Vector2Int> GenerateRooms(List<BoundsInt> _roomsList)
     {
         HashSet<Vector2Int> floor = new();
         HashSet<Vector2Int> floorSpawnPoints = new();
@@ -84,13 +87,12 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private HashSet<Vector2Int> GenerateSpawnPoints(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, int maxSpawnPoints)
     {
-        HashSet<Vector2Int> floorSpawnPoints = new HashSet<Vector2Int>(); // Floor for spawnpoints
+        HashSet<Vector2Int> floorSpawnPoints = new(); // Floor for spawnpoints
 
         float minDistanceToWallSquared = 5f; 
         int maxAttemptsPerPoint = 10;
-        spawnPointAmount = Mathf.Min(floor.Count, maxSpawnPoints);
 
-        for (int i = 0; i < spawnPointAmount; i++)
+        for (int i = 0; i < maxSpawnPoints; i++)
         {
             int attempts = 0;
             Vector2Int spawnPoint;
@@ -111,7 +113,6 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
                 if (IsAccessible(spawnPoint, walls)) 
                 {
                     floorSpawnPoints.Add(spawnPoint);
-                    spawnPoints_List.Add(spawnPoint);
                     validSpawnPoint = true;
                 }
 
@@ -139,7 +140,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private bool IsAccessible(Vector2Int position, HashSet<Vector2Int> walls)
     {
-        // Check if there's enough space around the position for player accessibility
+        // Check if there's enough space around the spawn position
         foreach (var direction in Directionss2D.cardinalDirectionsList)
         {
             Vector2Int neighborPosition = position + direction;
@@ -266,7 +267,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         if (roomsList.Count > 0)
         {
             roomCenter = roomsList[0].center;
-            // Debug.Log(roomCenter);
+            Debug.Log(roomCenter);
         }
 
         // Spawn the player at the center
@@ -275,23 +276,14 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         playerList.Add(newPlayer);
     }
 
-    // private void SpawnSpawnPointAt(Vector2Int position) 
-    // {
-    //     Vector2 spawnPosition = new(position.x, position.y);
-
-    //     for (int i = 0; i < spawnPointAmount; i++)
-    //     {
-    //         GameObject spawnPoint = Instantiate(spawnPointPrefab, spawnPosition, Quaternion.identity) as GameObject;
-    //         gameObject_SpawnPoints_List.Add(spawnPoint);
-    //     }
-    // }
 
     private void SpawnSpawnPointAt(Vector2Int position) 
     {
-        Vector3 spawnPosition = new Vector3(position.x, position.y, 0); // Ensure correct z position if needed
+        Vector2 spawnPosition = new(position.x, position.y);
 
         GameObject spawnPoint = Instantiate(spawnPointPrefab, spawnPosition, Quaternion.identity);
         gameObject_SpawnPoints_List.Add(spawnPoint);
+
     }
     
     private void SpawnEnemyAt(Vector2Int position)
@@ -354,11 +346,12 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
     }
 
     private void OnDrawGizmos()
-    {
-        // Draw room bounds for each room in the dungeon
-        foreach (var roomBounds in roomsList)
+    {        
+        for (int i = 0; i < roomsList.Count; i++)
         {
-            DrawRoomBounds(roomBounds);
+            DrawRoomBounds(roomsList[i]);
+            DrawFirstRoomBounds(roomsList[0]);
+            DrawLastRoomBounds(roomsList[^1]);
         }
     }
 
@@ -377,5 +370,39 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         Debug.DrawLine(topRight, bottomRight, Color.blue);
         Debug.DrawLine(bottomRight, bottomLeft, Color.blue);
         Debug.DrawLine(bottomLeft, topLeft, Color.blue);
+    }
+
+    private void DrawFirstRoomBounds(BoundsInt roomBounds) 
+    {
+        Vector3Int min = roomBounds.min;
+        Vector3Int max = roomBounds.max;
+
+        Vector3 topLeft = new(min.x, min.y, 0);
+        Vector3 topRight = new(max.x, min.y, 0);
+        Vector3 bottomRight = new(max.x, max.y, 0);
+        Vector3 bottomLeft = new(min.x, max.y, 0);
+
+        // Draw lines around the room bounds
+        Debug.DrawLine(topLeft, topRight, Color.green);
+        Debug.DrawLine(topRight, bottomRight, Color.green);
+        Debug.DrawLine(bottomRight, bottomLeft, Color.green);
+        Debug.DrawLine(bottomLeft, topLeft, Color.green);
+    }
+
+    private void DrawLastRoomBounds(BoundsInt roomBounds) 
+    {
+        Vector3Int min = roomBounds.min;
+        Vector3Int max = roomBounds.max;
+
+        Vector3 topLeft = new(min.x, min.y, 0);
+        Vector3 topRight = new(max.x, min.y, 0);
+        Vector3 bottomRight = new(max.x, max.y, 0);
+        Vector3 bottomLeft = new(min.x, max.y, 0);
+
+        // Draw lines around the room bounds
+        Debug.DrawLine(topLeft, topRight, Color.red);
+        Debug.DrawLine(topRight, bottomRight, Color.red);
+        Debug.DrawLine(bottomRight, bottomLeft, Color.red);
+        Debug.DrawLine(bottomLeft, topLeft, Color.red);
     }
 }
