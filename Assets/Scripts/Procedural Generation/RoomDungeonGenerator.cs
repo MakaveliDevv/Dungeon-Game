@@ -14,11 +14,16 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private void SpawnPlayer(GameObject _player) 
     {
         // Get the last room index
-        int lastRoomIndex = roomsList.Count > 0 ? roomsList.Count - 1 : -1;
+        // int lastRoomIndex = roomsList.Count > 0 ? roomsList.Count - 1 : -1;
 
         // Get the center from that room
-        Vector3 roomCenter = roomsList[lastRoomIndex].center;
-        Debug.Log(roomCenter);
+        // Vector3 roomCenter = roomsList[lastRoomIndex].center;
+        Vector3 roomCenter = Vector3.zero;
+        if (roomsList.Count > 0)
+        {
+            roomCenter = roomsList[0].center;
+            Debug.Log(roomCenter);
+        }
 
         // Spawn the player at the center
         GameObject newPlayer = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
