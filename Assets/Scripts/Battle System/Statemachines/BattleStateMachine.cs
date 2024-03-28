@@ -165,9 +165,12 @@ public class BattleStateMachine : MonoBehaviour
 
             case(BattleStates.LOSE):
                 // Do something
+                // Make the player lose some points like, hp or so
             break;
         }
         
+        
+        // HERO INPUT
         switch (heroInput) 
         {
             case(HeroGUI.ACTIVATE):

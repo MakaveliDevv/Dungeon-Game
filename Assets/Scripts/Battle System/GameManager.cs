@@ -59,11 +59,11 @@ public class GameManager : MonoBehaviour
         // Set this to be not destroyable
         DontDestroyOnLoad(gameObject);
 
-        if(!GameObject.Find("HeroCharacter")) 
-        {
-            GameObject hero = Instantiate(heroCharacter, nextHeroPosition, Quaternion.identity) as GameObject;
-            hero.name = "HeroCharacter";
-        }
+        // if(!GameObject.Find("HeroCharacter")) 
+        // {
+        //     GameObject hero = Instantiate(heroCharacter, nextHeroPosition, Quaternion.identity) as GameObject;
+        //     hero.name = "HeroCharacter";
+        // }
     }
 
     void Update() 
@@ -118,11 +118,11 @@ public class GameManager : MonoBehaviour
         if(isWalking && canGetEncounter) 
         {
             // Create random encounter number
-            if(Random.Range(0, 2000) < 10) 
-            {
+            // if(Random.Range(0, 2000) < 10) 
+            // {
                 Debug.Log("I got attacked");
                 gotAttacked = true;
-            }
+            // }
         }
     }
 
@@ -139,6 +139,12 @@ public class GameManager : MonoBehaviour
         // Hero
         lastHeroPosition = GameObject.Find("HeroCharacter").transform.position; // Save hero position for when leaving the battle
         LastScene = SceneManager.GetActiveScene().name;
+
+        // Check which of the spawn points the player has collided with
+
+        // Then remove the spawnpoint from the list
+
+        // Then clear the spawnpoint from the tilemap
 
         // Load level
         SceneManager.LoadScene(curRegion.BattleScene);

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TX Tileset Grass_0
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 70345852487738077, guid: 7d2fddc651ee58b4497b59c2c8344a37, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_Transform:
     e00: 1
     e01: 0

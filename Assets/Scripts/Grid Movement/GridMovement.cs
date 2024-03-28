@@ -6,12 +6,44 @@ public class GridMovement : MonoBehaviour
 {
     public bool isMoving;
     Vector3 initialPos, targetPos;
+    private Vector2 curPosition, lastPosition;
     public float timeToMove = .2f;
+
+    [SerializeField] private RegionData region;
 
 
     void Start()
     {
+        // if(GameManager.instance.NextSpawnPoint != "") 
+        // {
+        //     GameObject spawnPoint = GameObject.Find(GameManager.instance.NextSpawnPoint);
+        //     transform.position = spawnPoint.transform.position;
+
+        //     GameManager.instance.NextSpawnPoint = "";
+
+        // } else 
         
+        if(GameManager.instance.lastHeroPosition != Vector2.zero) 
+        {
+            transform.position = GameManager.instance.lastHeroPosition;
+            GameManager.instance.lastHeroPosition = Vector2.zero;
+        }
+    }
+
+    void FixedUpdate() 
+    {
+        curPosition = transform.position;
+
+        if(curPosition == lastPosition) 
+        {
+            GameManager.instance.isWalking = false;
+
+        } else 
+        {
+            GameManager.instance.isWalking = true;
+        }
+
+        lastPosition = curPosition;
     }
 
     void Update()
@@ -56,5 +88,31 @@ public class GridMovement : MonoBehaviour
         transform.position = targetPos;
 
         isMoving = false;
+    }
+
+    void OnTriggerEnter2D(Collider2D other) 
+    {
+        if(other.CompareTag("EncounterZone")) 
+        {
+            Debug.Log("Zone Encounterd!");
+            region = other.gameObject.GetComponent<RegionData>();
+            GameManager.instance.curRegion = region;
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D other) 
+    {
+        if(other.CompareTag("EncounterZone")) 
+        {
+            GameManager.instance.canGetEncounter = true;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other) 
+    {
+        if(other.CompareTag("EncounterZone")) 
+        {
+            GameManager.instance.canGetEncounter = false;
+        }
     }
 }

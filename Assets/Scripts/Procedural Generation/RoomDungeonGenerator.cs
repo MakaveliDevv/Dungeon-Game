@@ -10,26 +10,6 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         CreateRooms();
     }
 
-    
-    private void SpawnPlayer(GameObject _player) 
-    {
-        // Get the last room index
-        // int lastRoomIndex = roomsList.Count > 0 ? roomsList.Count - 1 : -1;
-
-        // Get the center from that room
-        // Vector3 roomCenter = roomsList[lastRoomIndex].center;
-        Vector3 roomCenter = Vector3.zero;
-        if (roomsList.Count > 0)
-        {
-            roomCenter = roomsList[0].center;
-            Debug.Log(roomCenter);
-        }
-
-        // Spawn the player at the center
-        GameObject newPlayer = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
-        playerList.Add(newPlayer);
-    }
-
     private void CreateRooms()
     {
         roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(
@@ -53,7 +33,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         tilemapVisualizer.PaintFloorTiles(floor);
 
         // Create walls
-        HashSet<Vector2Int> walls = WallGeneratorr.CreateWalls(floor, tilemapVisualizer); // Assuming CreateWalls returns the wall positions
+        HashSet<Vector2Int> walls = WallGeneratorr.CreateWalls(floor, tilemapVisualizer);
         
         // Generate spawn points within the floor positions
         maxSpawnPoints = 10; 
@@ -65,6 +45,7 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             if (canSpawn)
             {
                 SpawnEnemyAt(point);
+                SpawnSpawnPointAt(point);
             }
         }
 
@@ -103,23 +84,35 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private HashSet<Vector2Int> GenerateSpawnPoints(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, int maxSpawnPoints)
     {
-        HashSet<Vector2Int> floorSpawnPoints = new HashSet<Vector2Int>();
+        HashSet<Vector2Int> floorSpawnPoints = new HashSet<Vector2Int>(); // Floor for spawnpoints
 
-        float minDistanceToWallSquared = 1f;
-        int maxAttemptsPerPoint = 5;
-        int spawnPointAmount = Mathf.Min(floor.Count, maxSpawnPoints);
+        float minDistanceToWallSquared = 5f; 
+        int maxAttemptsPerPoint = 10;
+        spawnPointAmount = Mathf.Min(floor.Count, maxSpawnPoints);
 
         for (int i = 0; i < spawnPointAmount; i++)
         {
             int attempts = 0;
-            Vector2Int spawnPoint = floor.ElementAt(Random.Range(0, floor.Count));
+            Vector2Int spawnPoint;
+            bool validSpawnPoint = false;
 
-            while(attempts < maxAttemptsPerPoint) 
+            while (!validSpawnPoint && attempts < maxAttemptsPerPoint * floor.Count) 
             {
-                if (!IsTooCloseToWall(spawnPoint, walls, minDistanceToWallSquared) && IsAccessible(spawnPoint, walls)) 
+                spawnPoint = floor.ElementAt(Random.Range(0, floor.Count));
+
+                // Check if the spawn point is too close to any wall
+                if (IsTooCloseToWall(spawnPoint, walls, minDistanceToWallSquared))
+                {
+                    // Find a new spawn point away from the wall within the same floor
+                    spawnPoint = FindSpawnPointAwayFromWall(floor, walls, minDistanceToWallSquared);
+                }
+
+                // Check if the spawn point is accessible
+                if (IsAccessible(spawnPoint, walls)) 
                 {
                     floorSpawnPoints.Add(spawnPoint);
-                    break;
+                    spawnPoints_List.Add(spawnPoint);
+                    validSpawnPoint = true;
                 }
 
                 attempts++;
@@ -127,6 +120,21 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         }
 
         return floorSpawnPoints;
+    }
+
+    private Vector2Int FindSpawnPointAwayFromWall(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, float minDistanceToWallSquared)
+    {
+        // Iterate over the floor positions and find a position that is not too close to any wall
+        foreach (Vector2Int position in floor)
+        {
+            if (!IsTooCloseToWall(position, walls, minDistanceToWallSquared))
+            {
+                return position;
+            }
+        }
+
+        // If no suitable position is found, return a random position from the floor
+        return floor.ElementAt(Random.Range(0, floor.Count));
     }
 
     private bool IsAccessible(Vector2Int position, HashSet<Vector2Int> walls)
@@ -245,6 +253,45 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
         }
 
         return closestPoint;
+    }
+
+    private void SpawnPlayer(GameObject _player) 
+    {
+        // Get the last room index
+        // int lastRoomIndex = roomsList.Count > 0 ? roomsList.Count - 1 : -1;
+
+        // Get the center from that room
+        // Vector3 roomCenter = roomsList[lastRoomIndex].center;
+        Vector3 roomCenter = Vector3.zero;
+        if (roomsList.Count > 0)
+        {
+            roomCenter = roomsList[0].center;
+            // Debug.Log(roomCenter);
+        }
+
+        // Spawn the player at the center
+        GameObject newPlayer = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
+        newPlayer.name = "HeroCharacter";
+        playerList.Add(newPlayer);
+    }
+
+    // private void SpawnSpawnPointAt(Vector2Int position) 
+    // {
+    //     Vector2 spawnPosition = new(position.x, position.y);
+
+    //     for (int i = 0; i < spawnPointAmount; i++)
+    //     {
+    //         GameObject spawnPoint = Instantiate(spawnPointPrefab, spawnPosition, Quaternion.identity) as GameObject;
+    //         gameObject_SpawnPoints_List.Add(spawnPoint);
+    //     }
+    // }
+
+    private void SpawnSpawnPointAt(Vector2Int position) 
+    {
+        Vector3 spawnPosition = new Vector3(position.x, position.y, 0); // Ensure correct z position if needed
+
+        GameObject spawnPoint = Instantiate(spawnPointPrefab, spawnPosition, Quaternion.identity);
+        gameObject_SpawnPoints_List.Add(spawnPoint);
     }
     
     private void SpawnEnemyAt(Vector2Int position)
