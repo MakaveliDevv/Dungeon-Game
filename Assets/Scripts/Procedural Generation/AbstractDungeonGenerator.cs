@@ -29,6 +29,7 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField] protected List<GameObject> enemiesType = new();
     protected List<GameObject> enemies = new();
     [SerializeField] protected float enemySpawnRadius = 5f;
+    // [SerializeField] protected int maxEnemiesAmount;
     [SerializeField] protected int enemiesAmount;
     [SerializeField] protected float checkRadius = 5f; 
 

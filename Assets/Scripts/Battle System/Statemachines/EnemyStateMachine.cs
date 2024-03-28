@@ -22,14 +22,15 @@ public class EnemyStateMachine : MonoBehaviour
     public GameObject selector;    
     
     // For the progressbar
-    private float cur_cooldown;
-    private float max_cooldown = 1f;
+    private float curCooldown;
+    public float maxCooldown = 10f;
 
 
     // Time for action
     private bool actionStarted = false;
     private float animSpeed = 10f;
     public GameObject targetToAttack;
+
 
     // Alive enemy
     private bool alive = true;
@@ -44,26 +45,32 @@ public class EnemyStateMachine : MonoBehaviour
 
     void Update()
     {
+        // Enter the turn state machine
         switch (currentState)
         {
-            case (TurnState.PROCESSING):
+            case (TurnState.PROCESSING): // Enemy gets into this state fomr the start of the game just at the same time as checking for a performlist in the bsm
                 ProgressBar();
 
             break;
 
             case (TurnState.CHOOSEACTION):
-                ChooseAction();
+                // Enemy gets into this state after the progressbar is full 
+                // This triggers the takeaction state in bsm since this method adds an attacker in the performlist
+                ChooseAction(); 
 
             break;
 
             case (TurnState.WAITING):
                 // Idle state
+                // Enemy turns into next sate in the bsm takeaction state
 
             break;
 
             case (TurnState.ACTION):
-                StartCoroutine(TimeForAction());
+                StartCoroutine(TimeForAction()); // Enemy turns into this state from the bsm when the bsm is at the takeaction state
 
+                BSM.enemyTurn = false;
+                BSM.heroTurn = true;
             break;
 
             case (TurnState.DEAD):
@@ -129,39 +136,53 @@ public class EnemyStateMachine : MonoBehaviour
 
     private void  ProgressBar() 
     {
-        cur_cooldown += Time.deltaTime;
-        if(cur_cooldown >= max_cooldown) // If current cooldown reaches the maximum cooldown, then the processing state is over
+        if(BSM.enemyTurn && !BSM.heroTurn) 
         {
-            currentState = TurnState.CHOOSEACTION;
+            curCooldown += Time.deltaTime;
+
+            if(curCooldown >= maxCooldown) // If current cooldown reaches the maximum cooldown, then the processing state is over
+            {
+                currentState = TurnState.CHOOSEACTION;
+            }
         }
+        // float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
     }
 
     private void ChooseAction() 
     {
+        // Check if performlist is empty
         if(BSM.performList.Count == 0) 
         {
-            HandleTurn myAttack = new HandleTurn();
-            myAttack.Attacker = enemy.TheName;
-            myAttack.Type = "Enemy";
-            myAttack.attackersGobj = this.gameObject;
-            myAttack.attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)]; // Randomize the target
+            // If so then create a new instance of HandleTurn (this handles the information about the action)
+            HandleTurn myAttack = new()
+            {
+                Attacker = enemy.TheName,
+                Type = "Enemy",
+                attackersGobj = this.gameObject,
+                attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)] // Randomize the target
+            };
 
-            // Choose attack
+            // Initialize a random attack from the attacks in the enemy class
             int num = Random.Range(0, enemy.attacks.Count);
-            myAttack.chosenAttack = enemy.attacks[num];
 
-            // 
+            // ChosenAttack holds all the information about the attack, it's a class from BaseAttack
+            // myAttack = HandleTurn class
+            // chosenAttack = BaseAttack class
+            // enemy = BaseEnemy:BaseClass
+            // attacks = BaseAttack
+            myAttack.chosenAttack = enemy.attacks[num];
             
             // Debug
             Debug.Log(this.gameObject.name + " has choosen " + myAttack.chosenAttack.AttackName + " and does " + myAttack.chosenAttack.attackDamage + " damage");
+            BSM.CollectActions(myAttack); // This will add the input to the collect actions
 
-            BSM.CollectActions(myAttack);
             currentState = TurnState.WAITING;   
         }
     }
 
     private IEnumerator TimeForAction() 
     {
+        // Check if there is already an action started, by default not
         if(actionStarted) 
         {
             yield break;            
@@ -170,7 +191,7 @@ public class EnemyStateMachine : MonoBehaviour
         actionStarted = true;
 
         // Animate the enemy near the hero to attack
-        Vector2 targetPosition = new Vector2(targetToAttack.transform.position.x + 1.5f, targetToAttack.transform.position.y);
+        Vector2 targetPosition = new(targetToAttack.transform.position.x, targetToAttack.transform.position.y + 1.5f);
         while(MoveTowardsTarget(targetPosition)) { yield return null; } // Change while loop to something else
 
         // Wait a bit
@@ -181,22 +202,38 @@ public class EnemyStateMachine : MonoBehaviour
 
         // Animate back to start position
         Vector2 initialPosition = startPosition;
-        Debug.Log(initialPosition);
-
         while(MoveTowardsTarget(initialPosition)) { yield return null; } // Change while loop to something else
 
-        // Remove this performer from the list in the BSM
+        // Remove the enemy from the list in the BSM
         BSM.performList.RemoveAt(0);
 
-        // Reset the BSM -> WAIT
-        BSM.battleStates = BattleStateMachine.BattleStates.WAIT;
+        // Reset the battle state to waiting after completing an action
+        if(BSM.battleStates != BattleStateMachine.BattleStates.WIN && BSM.battleStates != BattleStateMachine.BattleStates.LOSE) 
+        {
+            BSM.battleStates = BattleStateMachine.BattleStates.WAIT;
 
+            // Reset the hero state
+            curCooldown = 0f;
+            currentState = TurnState.PROCESSING;
+        } else 
+        {
+            // Set the hero state back to waiting (idle)
+            currentState = TurnState.WAITING;
+        }
+
+        // // Reset the BSM -> WAIT
+        // BSM.battleStates = BattleStateMachine.BattleStates.WAIT; // This checks for a performer in the list again
+
+
+        // // Reset the enemy state
+        // curCooldown = 0f;
+        // currentState = TurnState.PROCESSING; // This triggers the progressbar to go again
+        
         // End coroutine
         actionStarted = false;
+        
+        yield return new WaitForSeconds(BSM.waitBeforeAttack);
 
-        // Reset the enemy state
-        cur_cooldown = 0f;
-        currentState = TurnState.PROCESSING;
     }
 
     private bool MoveTowardsTarget(Vector2 _targetPosition)
@@ -209,6 +246,7 @@ public class EnemyStateMachine : MonoBehaviour
     public void DoDamage() 
     {
         float calc_damage = enemy.curATK + BSM.performList[0].chosenAttack.attackDamage;
+        
         // Get the hsm which represents the hero being attacked
         targetToAttack.GetComponent<HeroStateMachine>().TakeDamge(calc_damage);
     }

@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
             case(GameStates.BATTLESTATE):
                 // Load battle scene
                 StartBattle();
+                // SceneManager.LoadScene(curRegion.BattleScene);
 
                 // Go to idle state
                 gameState = GameStates.IDLESTATE;
@@ -133,7 +134,7 @@ public class GameManager : MonoBehaviour
         // Which enemies
         for (int i = 0; i < enemyAmount; i++)
         {
-            enemiesToBattle.Add(curRegion.possibleEnemies[Random.Range(0, curRegion.possibleEnemies.Count)]);
+            enemiesToBattle.Add(curRegion.possibleEnemies[Random.Range(0, curRegion.possibleEnemies.Count)]); // Get the enemy from the encounter
         }
 
         // Hero

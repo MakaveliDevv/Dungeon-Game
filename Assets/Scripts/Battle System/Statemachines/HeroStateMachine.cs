@@ -32,6 +32,7 @@ public class HeroStateMachine : MonoBehaviour
     private bool actionStarted = false;
     private float animSpeed = 10f;
 
+
     // Dead
     private bool alive = true;
 
@@ -39,7 +40,6 @@ public class HeroStateMachine : MonoBehaviour
     private HeroPanelStats stats;
     public GameObject heroPanelUI;
     private Transform heroPanelSpacer;
-
 
     void Start()
     {
@@ -77,7 +77,9 @@ public class HeroStateMachine : MonoBehaviour
 
             case (TurnState.ACTION):
                 StartCoroutine(TimeForAction());
-                
+
+                BSM.heroTurn = false;
+                BSM.enemyTurn = true;
             break;
 
             case (TurnState.DEAD):
@@ -125,8 +127,7 @@ public class HeroStateMachine : MonoBehaviour
                     }
 
                     // Change color / play animation
-                    SpriteRenderer spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
-                    if (spriteRenderer != null)
+                    if (this.gameObject.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
                     {
                         spriteRenderer.material.color = new Color32(105, 105, 105, 255);
                     }
@@ -147,18 +148,23 @@ public class HeroStateMachine : MonoBehaviour
 
     private void ProgressBar() 
     {
-        curCooldown += Time.deltaTime;
-        float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
-        progressBar.transform.localScale = new Vector3(Mathf.Clamp(calc_cooldown, 0, 1), progressBar.transform.localScale.y, progressBar.transform.localScale.z);
-
-        if(curCooldown >= maxCooldown)
+        if(BSM.heroTurn && !BSM.enemyTurn) 
         {
-            currentState = TurnState.ADDTOLIST;
+            // Start cooldown
+            curCooldown += Time.deltaTime;
+            float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
+            progressBar.transform.localScale = new Vector3(Mathf.Clamp(calc_cooldown, 0, 1), progressBar.transform.localScale.y, progressBar.transform.localScale.z);
+        
+            if(curCooldown >= maxCooldown)
+            {
+                currentState = TurnState.ADDTOLIST;
+            }
         }
     }
 
     private IEnumerator TimeForAction() 
     {
+        // Check if there is already an action started, by default not
         if(actionStarted) 
         {
             yield break;            
@@ -167,7 +173,7 @@ public class HeroStateMachine : MonoBehaviour
         actionStarted = true;
 
         // Animate the enemy near the hero to attack
-        Vector2 targetPosition = new Vector2(targetToAttack.transform.position.x - 1.5f, targetToAttack.transform.position.y);
+        Vector2 targetPosition = new(targetToAttack.transform.position.x, targetToAttack.transform.position.y - 1.5f);
         while(MoveTowardsTarget(targetPosition)) { yield return null; } // Change while loop to something else
 
         // Wait a bit
@@ -199,6 +205,8 @@ public class HeroStateMachine : MonoBehaviour
 
         // End coroutine
         actionStarted = false;
+
+        yield return new WaitForSeconds(BSM.waitBeforeAttack);
     }
 
     private bool MoveTowardsTarget(Vector2 _targetPosition)

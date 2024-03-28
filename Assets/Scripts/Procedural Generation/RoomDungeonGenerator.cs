@@ -38,10 +38,33 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         // Create walls
         HashSet<Vector2Int> walls = WallGeneratorr.CreateWalls(floor, tilemapVisualizer);
-        
-        // Generate spawn points within the floor positions
-        maxSpawnPoints = 10; 
+         
         HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floor, walls, maxSpawnPoints);
+
+                
+        // Generate spawn points within the floor positions
+        // HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floor, walls, maxSpawnPoints);
+
+        // // Determine the number of enemies to spawn at each spawn point
+        // int enemiesPerSpawnPoint = maxEnemiesAmount / floorSpawnPoints.Count;
+
+        // foreach (Vector2Int point in floorSpawnPoints)
+        // {
+        //     for (int i = 0; i < enemiesPerSpawnPoint; i++)
+        //     {
+        //         if (CanSpawnEnemyAt(point))
+        //         {
+        //             SpawnEnemyAt(point);
+        //         }
+        //     }
+        //     SpawnSpawnPointAt(point);
+        // }
+
+        // SpawnPlayer(playerPrefab);
+
+        // // Visualize spawn points using TilemapVisualizer
+        // tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
+        
 
         foreach (Vector2Int point in floorSpawnPoints)
         {
@@ -259,16 +282,16 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private void SpawnPlayer(GameObject _player) 
     {
         // Get the last room index
-        // int lastRoomIndex = roomsList.Count > 0 ? roomsList.Count - 1 : -1;
+        int lastRoomIndex = roomsList.Count > 0 ? roomsList.Count - 1 : -1;
 
         // Get the center from that room
-        // Vector3 roomCenter = roomsList[lastRoomIndex].center;
-        Vector3 roomCenter = Vector3.zero;
-        if (roomsList.Count > 0)
-        {
-            roomCenter = roomsList[0].center;
-            Debug.Log(roomCenter);
-        }
+        Vector3 roomCenter = roomsList[lastRoomIndex].center;
+        // Vector3 roomCenter = Vector3.zero;
+        // if (roomsList.Count > 0)
+        // {
+        //     roomCenter = roomsList[0].center;
+        //     Debug.Log(roomCenter);
+        // }
 
         // Spawn the player at the center
         GameObject newPlayer = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;

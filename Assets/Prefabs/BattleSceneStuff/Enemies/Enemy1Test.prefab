@@ -105,8 +105,8 @@ MonoBehaviour:
     curHP: 50
     baseMP: 50
     curMP: 50
-    baseATK: 50
-    curATK: 50
+    baseATK: 10
+    curATK: 10
     baseDEF: 50
     curDEF: 50
     attacks:
@@ -115,6 +115,7 @@ MonoBehaviour:
     rarity: 1
   currentState: 0
   selector: {fileID: 9073286497424302531, guid: dca6c5e50ebe5074cb1d0c7eea31586c, type: 3}
+  maxCooldown: 1
   targetToAttack: {fileID: 0}
 --- !u!1001 &195131687413133251
 PrefabInstance:
