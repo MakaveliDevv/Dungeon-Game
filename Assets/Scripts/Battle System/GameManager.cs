@@ -40,7 +40,13 @@ public class GameManager : MonoBehaviour
 
     // Spawnpoint
     public string NextSpawnPoint;
+
+
+    // List for the encounterd enemies
+    public List<string> encounterdEnemy = new();
     
+    public bool battleWon;
+
     void Awake()
     {
         // Check if instance exist
@@ -61,7 +67,7 @@ public class GameManager : MonoBehaviour
 
         // if(!GameObject.Find("HeroCharacter")) 
         // {
-        //     GameObject hero = Instantiate(heroCharacter, nextHeroPosition, Quaternion.identity) as GameObject;
+        //     GameObject hero = Instantiate(heroCharacter, nextHersioPotion, Quaternion.identity) as GameObject;
         //     hero.name = "HeroCharacter";
         // }
     }
@@ -102,16 +108,40 @@ public class GameManager : MonoBehaviour
             break;
             // default:
         }
+
+        // if(battleWon) 
+        // {
+        //     Debug.Log(battleWon);
+        //     StartCoroutine(WaitBeforeFlagToFalse());
+        //     // foreach (GameObject enemy in encounterdEnemy)
+        //     // {
+        //     //     // Destroy(enemy);
+        //     //     // encounterdEnemy.Clear();
+        //     //     Debug.Log(enemy.name + ": Dungeon Enemy Succesfully Destroyed");
+        //     // }
+        // } 
     }
 
-    public void LoadNextScene() 
+    // public void LoadNextScene() 
+    // {
+    //     SceneManager.LoadScene(SceneToLoad);
+    // }
+
+    IEnumerator WaitBeforeFlagToFalse() 
     {
-        SceneManager.LoadScene(SceneToLoad);
+        yield return new WaitForSeconds(1f);
+        battleWon = false;
     }
 
-    public void LoadSceneAfterBattle() 
+    public bool LoadSceneAfterBattle() 
     {
-        SceneManager.LoadScene(LastScene);
+        if(battleWon) 
+        {
+            SceneManager.LoadScene(LastScene);
+            return true;
+        }
+
+        return false;
     }
 
     private void RandomEncounter() 

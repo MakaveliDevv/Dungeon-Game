@@ -35,10 +35,13 @@ public class EnemyStateMachine : MonoBehaviour
     // Enemy
     public GameObject dungeonEnemy; 
     private bool alive = true;
+    public bool playerDetected;
+
 
     void Start()
     {
         currentState = TurnState.PROCESSING;
+        // BSM = GameObject.Find("BattleManagerDungeon").GetComponent<BattleStateMachine>();
         BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>();
         startPosition = transform.position;
         selector.SetActive(false);
@@ -134,6 +137,15 @@ public class EnemyStateMachine : MonoBehaviour
         }
     }
 
+    // void OnTriggerEnter2D(Collider2D other) 
+    // {
+    //     if(other.CompareTag("Hero")) 
+    //     {
+    //         playerDetected = true;
+    //         startPosition = transform.position;
+    //     }
+    // }
+    
     private void  ProgressBar() 
     {
         if(BSM.enemyTurn && !BSM.heroTurn) 

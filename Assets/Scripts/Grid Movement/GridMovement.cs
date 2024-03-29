@@ -8,9 +8,16 @@ public class GridMovement : MonoBehaviour
     Vector3 initialPos, targetPos;
     private Vector2 curPosition, lastPosition;
     public float timeToMove = .2f;
+    private Rigidbody2D rb;
 
     [SerializeField] private RegionData region;
+    // [SerializeField] private GameManager gameManag;
 
+
+    void Awake()
+    {
+        // gameManag = GameObject.FindFirstObjectByType<GameManager>();
+    } 
 
     void Start()
     {
@@ -23,6 +30,7 @@ public class GridMovement : MonoBehaviour
 
         // } else 
         
+        rb = GetComponent<Rigidbody2D>();
         if(GameManager.instance.lastHeroPosition != Vector2.zero) 
         {
             transform.position = GameManager.instance.lastHeroPosition;
@@ -80,12 +88,12 @@ public class GridMovement : MonoBehaviour
 
         while(elapsedTime < timeToMove) 
         {
-            transform.position = Vector3.Lerp(initialPos, targetPos, (elapsedTime / timeToMove));
+            rb.MovePosition(Vector3.Lerp(initialPos, targetPos, (elapsedTime / timeToMove)));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        transform.position = targetPos;
+        rb.MovePosition(targetPos);
 
         isMoving = false;
     }
@@ -97,7 +105,27 @@ public class GridMovement : MonoBehaviour
             Debug.Log("Zone Encounterd!");
             region = other.gameObject.GetComponent<RegionData>();
             GameManager.instance.curRegion = region;
-        }
+
+            // Add the current enemy to the encounterdEnemy list in GamaManager
+            // gameManag.encounterdEnemy.Add(other.gameObject);
+            GameManager.instance.encounterdEnemy.Add(other.gameObject.name);
+
+            if(GameManager.instance.battleWon) 
+            {
+                foreach(string enemyName in GameManager.instance.encounterdEnemy)
+                {
+                    // Find the GameObject with the specified name
+                    GameObject enemyObject = GameObject.Find(enemyName);
+                    
+                    // Check if the enemyObject exists and then destroy it
+                    if(enemyObject != null)
+                    {
+                        Destroy(enemyObject);
+                        Debug.Log("Destroyed enemy: " + enemyName);
+                    }
+                }
+            }   
+        }    
     }
 
     void OnTriggerStay2D(Collider2D other) 

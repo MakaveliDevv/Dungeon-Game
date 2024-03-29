@@ -63,9 +63,15 @@ public class BattleStateMachine : MonoBehaviour
     public bool heroTurn, enemyTurn;
     public float waitBeforeAttack;
 
+    // private GameManager gameManager;
+
 
     void Awake() 
     {
+        // gameManager = GameObject.FindFirstObjectByType<GameManager>();
+        // gameManager.battleWon = false;
+        GameManager.instance.battleWon = false;
+        
         for (int i = 0; i < GameManager.instance.enemyAmount; i++)
         {
             GameObject newEnemy = Instantiate(GameManager.instance.enemiesToBattle[i], spawnPoints[i].position, Quaternion.identity) as GameObject; // Instantiate a new game object which resembles the enemy
@@ -186,14 +192,16 @@ public class BattleStateMachine : MonoBehaviour
             break;
 
             case(BattleStates.WIN):
+                GameManager.instance.battleWon = true;
                 for (int i = 0; i < herosInBattle.Count; i++)
                 {
                     herosInBattle[i].GetComponent<HeroStateMachine>().currentState = HeroStateMachine.TurnState.WAITING;
 
-                    GameManager.instance.LoadSceneAfterBattle();
-                    GameManager.instance.gameState = GameManager.GameStates.WORLDSTATE;
-                    GameManager.instance.enemiesToBattle.Clear();
-                    // StartCoroutine(DestroyGameObjectOverTime(region.gameObject));
+                    if(GameManager.instance.LoadSceneAfterBattle()) 
+                    {
+                        GameManager.instance.gameState = GameManager.GameStates.WORLDSTATE;
+                        GameManager.instance.enemiesToBattle.Clear();
+                    }
                 }
 
             break;

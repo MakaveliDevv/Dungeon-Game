@@ -35,6 +35,8 @@ public class HeroStateMachine : MonoBehaviour
 
     // Dead
     private bool alive = true;
+    public bool hasCollidedWithEnemy;
+
 
     // Hero panel
     private HeroPanelStats stats;
@@ -50,6 +52,8 @@ public class HeroStateMachine : MonoBehaviour
         CreateHeroPanel();
 
         BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
+        // BSM = GameObject.Find("BattleManagerDungeon").GetComponent<BattleStateMachine>(); // Change to instance
+
         currentState = TurnState.PROCESSING;
         startPosition = transform.position;
     }
@@ -145,6 +149,48 @@ public class HeroStateMachine : MonoBehaviour
             // default:
         }
     }
+    
+    // void OnTriggerEnter2D(Collider2D other) 
+    // {
+    //     if(other.CompareTag("Enemy")) 
+    //     {
+    //         hasCollidedWithEnemy = true;
+    //         selector.SetActive(false);
+
+    //         // Find the battlecanvas, battlepanel, heropanel and heropanelspacer
+    //         heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
+
+    //         // Create hero panel
+    //         CreateHeroPanel();
+           
+    //         // Find the battle manager game object
+    //         BSM = GameObject.Find("BattleManagerDungeon").GetComponent<BattleStateMachine>(); // Change to instance
+
+    //         // Add enemy to battle list
+    //         BSM.enemiesInBattle.Add(other.gameObject);
+
+    //         // Add hero to battle list
+    //         BSM.herosInBattle.Add(gameObject);
+      
+    //         // Flag the hero turn
+    //         BSM.heroTurn = true;
+
+    //         // Set the current state to processing
+    //         currentState = TurnState.PROCESSING;
+
+    //         // Set the start position to the current position
+    //         startPosition = transform.position;
+
+    //         // Set the battle state to wait
+    //         BSM.battleStates = BattleStateMachine.BattleStates.WAIT;
+
+    //         // Create the enemy buttons
+    //         BSM.EnemyButtons();
+
+    //         // Set the hero GUI active
+    //         BSM.heroInput = BattleStateMachine.HeroGUI.ACTIVATE;
+    //     }
+    // }
 
     private void ProgressBar() 
     {

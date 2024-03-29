@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &356961805599284114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5475589751990316004}
+  - component: {fileID: 8251083802224116937}
+  m_Layer: 0
+  m_Name: BattleManagerDungeon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5475589751990316004
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356961805599284114}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2999.291, y: 268.7987, z: 4.4560843}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8251083802224116937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356961805599284114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e1529ca0857b774fb0cc52d6a0ee395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleStates: 0
+  performList: []
+  herosInBattle: []
+  enemiesInBattle: []
+  heroInput: 0
+  herosToManage: []
+  attackParentPanel: {fileID: 0}
+  actionPanel: {fileID: 0}
+  magicPanel: {fileID: 0}
+  enemySelectPanel: {fileID: 0}
+  targetSelectSpacer: {fileID: 0}
+  actionSpacer: {fileID: 0}
+  magicSpacer: {fileID: 0}
+  actionBtn: {fileID: 7366579815221470558, guid: 868ade008ef8e374a97fede9032d9a09, type: 3}
+  targetButton: {fileID: 5793913476896135804, guid: 986231323837b7d43aa4d338e8b30d23, type: 3}
+  magicAttButton: {fileID: 6894804735302846710, guid: 59a4f1f7dffca33419b53f0ade86e403, type: 3}
+  spawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  heroTurn: 0
+  enemyTurn: 0
+  waitBeforeAttack: 0
