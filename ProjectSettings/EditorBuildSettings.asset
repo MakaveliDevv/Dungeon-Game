@@ -9,10 +9,13 @@ EditorBuildSettings:
     path: Assets/Scenes/BattleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/WorldMap.unity
+    path: Assets/Scenes/Dungeon.unity
     guid: 17f7d1e85c56fda4692282ac18a6ce0c
   - enabled: 1
     path: Assets/Scenes/Town1.unity
     guid: e6fa8a2fa83f10649a1484af32f6862c
+  - enabled: 1
+    path: Assets/Scenes/GameOverScene.unity
+    guid: 0417e02c57ed43f41a17fec40f27da37
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

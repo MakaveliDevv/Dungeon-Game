@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxEnemiesEncounter: 1
-  BattleScene: BattleScene
+  Scene: BattleScene
   possibleEnemies:
   - {fileID: 8039063565923375067, guid: 186023c4b0287e14192553f0721aaac3, type: 3}
 --- !u!58 &4305704690490955291

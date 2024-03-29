@@ -118,12 +118,8 @@ public class GameManager : MonoBehaviour
     {
         if(isWalking && canGetEncounter) 
         {
-            // Create random encounter number
-            // if(Random.Range(0, 2000) < 10) 
-            // {
-                Debug.Log("I got attacked");
-                gotAttacked = true;
-            // }
+            Debug.Log("I got attacked");
+            gotAttacked = true;
         }
     }
 
@@ -131,7 +127,7 @@ public class GameManager : MonoBehaviour
     {
         enemyAmount = Random.Range(1, curRegion.maxEnemiesEncounter + 1);
 
-        // Which enemies
+        // Which enemy
         for (int i = 0; i < enemyAmount; i++)
         {
             enemiesToBattle.Add(curRegion.possibleEnemies[Random.Range(0, curRegion.possibleEnemies.Count)]); // Get the enemy from the encounter
@@ -141,14 +137,8 @@ public class GameManager : MonoBehaviour
         lastHeroPosition = GameObject.Find("HeroCharacter").transform.position; // Save hero position for when leaving the battle
         LastScene = SceneManager.GetActiveScene().name;
 
-        // Check which of the spawn points the player has collided with
-
-        // Then remove the spawnpoint from the list
-
-        // Then clear the spawnpoint from the tilemap
-
         // Load level
-        SceneManager.LoadScene(curRegion.BattleScene);
+        SceneManager.LoadScene(curRegion.Scene);
 
         // Reset hero
         isWalking = false;

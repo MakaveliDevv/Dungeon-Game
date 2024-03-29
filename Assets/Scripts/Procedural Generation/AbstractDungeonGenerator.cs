@@ -29,9 +29,9 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField] protected List<GameObject> enemiesType = new();
     protected List<GameObject> enemies = new();
     [SerializeField] protected float enemySpawnRadius = 5f;
-    // [SerializeField] protected int maxEnemiesAmount;
     [SerializeField] protected int enemiesAmount;
     [SerializeField] protected float checkRadius = 5f; 
+    [SerializeField] protected int enemyCounter;
 
     [Header("Player stuff")]
     [SerializeField] protected GameObject playerPrefab;
@@ -49,9 +49,6 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
 
         DestroyEnemiesInScene();
         enemies.Clear();
-
-        // DestroyButtons();
-        // btnList.Clear();
 
         roomCount = 0;
         RunProceduralGeneration();
@@ -84,12 +81,9 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
         }
     }
 
-    // private void DestroyButtons() 
-    // {
-    //     foreach (GameObject btn in btnList)
-    //     {
-    //         DestroyImmediate(btn);
-    //     }
-    // }
-    
+    public IEnumerator DestroyGameObjectOverTime(GameObject gameobject) 
+    {
+        yield return new WaitForSeconds(.1f);
+        Destroy(gameobject);
+    }
 }

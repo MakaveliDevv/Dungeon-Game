@@ -13,24 +13,20 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private void CreateRooms()
     {
-<<<<<<< HEAD
         roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(
             new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeon.width, dungeon.height, 0)), dungeon.minRoomWidth, dungeon.minRoomHeight
         );
-=======
-        var roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
 
-        HashSet<Vector2Int> floor = new();
-        if (randomWalkRooms)
-        {
-            floor = CreateRoomsRandomly(roomsList);
+        // HashSet<Vector2Int> floor = new();
+        // if (randomWalkRooms)
+        // {
+        //     floor = CreateRoomsRandomly(roomsList);
 
-        }
-        else
-        {
-            floor = CreateSimpleRooms(roomsList);
-        }
->>>>>>> parent of a8c6dcc (Update 2.6)
+        // }
+        // else
+        // {
+        //     floor = CreateSimpleRooms(roomsList);
+        // }
 
         HashSet<Vector2Int> floor = GenerateRooms(roomsList);
         List<Vector2Int> roomCenters = new();
@@ -53,33 +49,9 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         // Create walls
         HashSet<Vector2Int> walls = WallGeneratorr.CreateWalls(floor, tilemapVisualizer);
-         
+
+        // Create spawn points
         HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floor, walls, maxSpawnPoints);
-
-                
-        // Generate spawn points within the floor positions
-        // HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floor, walls, maxSpawnPoints);
-
-        // // Determine the number of enemies to spawn at each spawn point
-        // int enemiesPerSpawnPoint = maxEnemiesAmount / floorSpawnPoints.Count;
-
-        // foreach (Vector2Int point in floorSpawnPoints)
-        // {
-        //     for (int i = 0; i < enemiesPerSpawnPoint; i++)
-        //     {
-        //         if (CanSpawnEnemyAt(point))
-        //         {
-        //             SpawnEnemyAt(point);
-        //         }
-        //     }
-        //     SpawnSpawnPointAt(point);
-        // }
-
-        // SpawnPlayer(playerPrefab);
-
-        // // Visualize spawn points using TilemapVisualizer
-        // tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
-        
 
         foreach (Vector2Int point in floorSpawnPoints)
         {
@@ -109,14 +81,9 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
             foreach (var _position in roomFloor)
             {
-<<<<<<< HEAD
                 if ((_position.x >= (roomBounds.xMin + dungeon.offset) && _position.x <= (roomBounds.xMax - dungeon.offset)
                     && _position.y >= (roomBounds.yMin + dungeon.offset) && _position.y <= (roomBounds.yMax - dungeon.offset)))
-=======
-                if(_position.x >= (roomBounds.xMin + offset) && _position.x <= (roomBounds.xMax - offset) 
-                && _position.y >= (roomBounds.yMin + offset) && _position.y <= (roomBounds.yMax - offset)) 
                 {
->>>>>>> parent of a8c6dcc (Update 2.6)
                     floor.Add(_position);
                 }
             }
@@ -222,7 +189,6 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             Vector2Int closestPoint = FindClosestPointTo(currentRoomCenter, _roomCenters);
             _roomCenters.Remove(closestPoint);
 
-<<<<<<< HEAD
             HashSet<Vector2Int> corridor = CreateCorridor(currentRoomCenter, closestPoint);
 
             // Convert newCorridor from HashSet<Vector2Int> to List<Vector2Int>
@@ -238,11 +204,9 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             corridors.UnionWith(expandedCorridor);
 
             currentRoomCenter = closestPoint;
-=======
             HashSet<Vector2Int> newCorridor = CreateCorridor(currentRoomCenter, closestPoint);
             currentRoomCenter = closestPoint;
             corridors.UnionWith(newCorridor);
->>>>>>> parent of a8c6dcc (Update 2.6)
         }
 
         return corridors;
@@ -356,6 +320,9 @@ public class RoomDungeonGenerator : SimpleRandomWalkDungeonGenerator
             // Instantiate the enemy prefab at the position
             GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity) as GameObject;
             enemies.Add(newEnemy);
+
+            // Set a counter
+            enemyCounter++;
         }
 
         // Debug.Log($"Spawned {amount} of {enemyPrefab.name} at position {position}");

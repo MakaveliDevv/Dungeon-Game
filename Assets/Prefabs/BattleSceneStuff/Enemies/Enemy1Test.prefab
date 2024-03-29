@@ -117,6 +117,7 @@ MonoBehaviour:
   selector: {fileID: 9073286497424302531, guid: dca6c5e50ebe5074cb1d0c7eea31586c, type: 3}
   maxCooldown: 1
   targetToAttack: {fileID: 0}
+  dungeonEnemy: {fileID: 8877997281355131475, guid: 08e4f4aa07ed57d4e8d344bce5dda37f, type: 3}
 --- !u!1001 &195131687413133251
 PrefabInstance:
   m_ObjectHideFlags: 0

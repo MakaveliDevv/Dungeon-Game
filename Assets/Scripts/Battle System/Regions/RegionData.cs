@@ -5,6 +5,6 @@ using UnityEngine;
 public class RegionData : MonoBehaviour
 {
     public int maxEnemiesEncounter = 4;
-    public string BattleScene;
+    public string Scene;
     public List<GameObject> possibleEnemies = new();
 }

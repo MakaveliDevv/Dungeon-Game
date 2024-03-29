@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BattleStateMachine : MonoBehaviour
@@ -192,13 +193,23 @@ public class BattleStateMachine : MonoBehaviour
                     GameManager.instance.LoadSceneAfterBattle();
                     GameManager.instance.gameState = GameManager.GameStates.WORLDSTATE;
                     GameManager.instance.enemiesToBattle.Clear();
+                    // StartCoroutine(DestroyGameObjectOverTime(region.gameObject));
                 }
 
             break;
 
             case(BattleStates.LOSE):
                 // Do something
+
                 // Make the player lose some points like, hp or so
+                
+
+                // Check if player hp is zero
+
+                // If so then show game over screen
+
+                // Switch to end game screen
+                SceneManager.LoadScene("GameOverScene");
             break;
         }
         

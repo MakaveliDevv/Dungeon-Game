@@ -32,7 +32,8 @@ public class EnemyStateMachine : MonoBehaviour
     public GameObject targetToAttack;
 
 
-    // Alive enemy
+    // Enemy
+    public GameObject dungeonEnemy; 
     private bool alive = true;
 
     void Start()
@@ -110,8 +111,7 @@ public class EnemyStateMachine : MonoBehaviour
                     }
 
                     // Change the color / play dead animation
-                    SpriteRenderer spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
-                    if(spriteRenderer != null) 
+                    if(this.gameObject.TryGetComponent<SpriteRenderer>(out var spriteRenderer)) 
                     {
                         spriteRenderer.material.color = new Color32(105, 105, 105, 255);
                     } else 
